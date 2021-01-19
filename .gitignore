@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/flask-tut
 /.pnp
 .pnp.js
 
