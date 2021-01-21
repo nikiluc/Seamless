@@ -8,12 +8,14 @@ def init():
     global alreadyChosenSP
     global checkedAlbums
     global artistDict
+    global limit
 
     albumtracks = []
     alreadyChosenFM = []
     alreadyChosenSP = []
     checkedAlbums = []
     artistDict = {}
+    limit = 10
 
 
 def calcLoudnessRange(value):

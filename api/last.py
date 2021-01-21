@@ -99,8 +99,6 @@ def validTracks(genSong, songObj):
 # Uses search string to find similar songs 
 def launch(search_str):
 
-    limit = 10
-
     #Authentication to create playlist
     scope = 'playlist-modify-public'
     spUser = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
@@ -111,11 +109,11 @@ def launch(search_str):
         seamless.genPlaylist(util.albumtracks, util.albumtracks[0].title, spUser, user_id)
         return True
 
-    print("SLEEP")
-    time.sleep(5)
-
     # initialization of global variables
     util.init()
+
+    # playlist length
+    limit = util.limit
 
     # creation of song object
     data = seamless.getSongData(search_str)
@@ -159,7 +157,6 @@ if __name__ == "__main__":
     random.seed(datetime.now())
 
     launch(search_str="starving zedd")
-    #seamless.main(spUser)
 
     
 
