@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import alanBtn from '@alan-ai/alan-sdk-web';
-import $ from "jquery";
 
 const alanKey = '08dd587b9900d0225d9ec940df3f5af82e956eca572e1d8b807a3e2338fdd0dc/stage';
 
+var alan;
 
 const App = () => {
 
-  const [currentTime, setCurrentTime] = useState(0);
-
   useEffect(() => {
-    alanBtn({
+    alan = alanBtn({
         key: alanKey,
         onCommand: ({command, song_info, search_str, ans}) => {
             if (command === 'listSearch'){
@@ -47,14 +45,15 @@ function makePlaylist(search_str) {
     return response.text();
 }).then(function(response) {
     console.log(response);
-    alanBtn().callProjectApi("setClientData1", { value: response }, function (error, result) {
+    alan.activate();
+    alan.callProjectApi("setClientData1", { value: response }, function (error, result) {
       if (error) {
           console.error(error);
           return;
       }
-      console.log(result)
-      alanBtn().activate();
+      
     });
+    
   });
 }
 
@@ -73,7 +72,6 @@ function postPlaylist(ans) {
     }
     return response.text();
 }).then(function(response) {
-    alanBtn().deactivate();
     console.log(response);
 }).catch(function(error) {
     console.log(error);
