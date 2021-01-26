@@ -30,6 +30,8 @@ def makeSongFromID(songID):
     artist = trackdata['album']['artists'][0]['name']
     a_id = trackdata['album']['artists'][0]['id']
     availableMarkets = trackdata['album']['available_markets']
+    externalURL = trackdata['external_urls']['spotify']
+    imgURL = trackdata['album']['images'][2]['url']
 
     songData.append(songID)
     songData.append(name)
@@ -38,6 +40,8 @@ def makeSongFromID(songID):
     songData.append(year)
     songData.append(albumName)
     songData.append(availableMarkets)
+    songData.append(externalURL)
+    songData.append(imgURL)
 
     songObj = getSongInfo(songData)
 
@@ -84,7 +88,7 @@ def getSongInfo(songStats):
         mode = features[0]['mode']
 
     # Final song object
-    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], tempo, loudness, danceability, energy, valence, speechiness, mode)
+    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], songStats[7], songStats[8], tempo, loudness, danceability, energy, valence, speechiness, mode)
 
     return genSong
 

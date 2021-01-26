@@ -37,15 +37,60 @@
   }
 }
 
+@font-face {
+  font-family: 'vegan_style_personal_useRg';
+  src: url('fonts/veganstylepersonaluse-5y58-webfont.woff2') format('woff2'),
+       url('fonts/veganstylepersonaluse-5y58-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+a {
+  color: whitesmoke;
+  text-decoration: none; /* no underline */
+}
+
+a:hover {
+  color: #1DB954;
+  text-decoration: none; /* no underline */
+}
+
+.list-group-item{
+
+  background-color: transparent;
+  border-radius: 2rem 2rem 0rem 0rem;
+  min-height: 0vmin;
+  min-width: 80vmin;
+  font-size: 20px;
+  
+
+}
+
+
+.songList {
+  border-radius: 2rem 2rem 0rem 0rem;
+  margin-top: 40px;
+  border: solid;
+  border-color: whitesmoke;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.39), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+  -webkit-mask-image: linear-gradient(to bottom, black 96%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 96%, transparent 100%);
+  overflow-y: scroll;
+
+}
+
 .form-rounded {
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.39), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
-  margin-top: 70px;
   border-radius: 2rem;
   min-height: 8vmin;
   min-width: 80vmin;
 }
 
 .submitBtn{
+  background-color: #1DB954;
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.39), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
   margin-top: 20px;
   border-radius: 2rem;
@@ -53,3 +98,209 @@
 
 }
 
+.spotifyButton {
+  margin: 10px;
+  padding: 10px;
+  display: inline-block;
+  background-color: #1DB954;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.39), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+  margin-top: 10px;
+  border-radius: 2rem;
+  min-width: 16vmin;
+
+}
+
+.title{
+  color: whitesmoke;
+  font-family: vegan_style_personal_useRg;
+  font-size: calc(10px + 15vmin);
+  text-shadow: 2px 2px 4px #000000;
+  margin-bottom: 0px;
+}
+
+.animate__animated.animate__fadeInDown {
+  --animate-duration: 2s;
+}
+
+.animate__animated.animate__fadeInUp {
+  --animate-duration: 2s;
+}
+
+.animate__animated.animate__fadeIn {
+  --animate-duration: 2s;
+}
+
+.spinner {
+  position: fixed;
+  margin: 100px auto;
+  width: 100px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+
+}
+
+.spinner > div {
+  width: 7px;
+	margin: 0 3px 0 0;
+  background-color: rgb(218, 216, 216);
+  height: 100%;
+  width: 10px;
+  display: inline-block;
+  
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+
+.footer {
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+
+}
+
+.tech {
+  margin-top: -80px;
+}
+
+@keyframes flickerAnimation {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-o-keyframes flickerAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-moz-keyframes flickerAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-webkit-keyframes flickerAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+.animate-flicker {
+  color: white;
+   -webkit-animation: flickerAnimation 2s infinite;
+   -moz-animation: flickerAnimation 2s infinite;
+   -o-animation: flickerAnimation 2s infinite;
+    animation: flickerAnimation 2s infinite;
+}
+
+/* Testing out loading animation */
+
+.js-loading {
+	display: none;
+	text-align: center;
+	font-size: 1.125em;
+	color: #fff;
+	fill: #fff;
+	margin-top: 2em
+}
+
+@media (min-width:48em) {
+	.js-loading {
+		font-size: 1.625em;
+		margin-top: 2em
+	}
+}
+
+@media (min-width:50em) {
+	.js-loading {
+		margin-top: 3em
+	}
+}
+
+.js-loading ul {
+	position: relative
+}
+
+.js-loading li {
+	transition: transform .2s ease-out, opacity .15s linear .05s;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+	transform: translate3d(0, 100%, 0)
+}
+
+.js-loading li.active {
+	transition: transform .3s ease-out .05s, opacity .225s linear 75ms;
+	opacity: 1;
+	transform: translateZ(0)
+}
+
+.js-loading li.last {
+	transform: translate3d(0, -100%, 0)
+}
+
+.js-loading i {
+	width: 1.65em;
+	height: 1.65em;
+	margin-right: .23em
+}
+
+.js-loading span {
+	padding-top: .25em
+}
+
+.js-loading i,
+.js-loading span {
+	display: inline-block;
+	vertical-align: top
+}
+
+.loading .input-wrap {
+	display: none
+}
+
+.loading .js-loading {
+	display: block
+}
+
+.input-wrap-outer {
+	position: relative;
+	text-align: center
+}
