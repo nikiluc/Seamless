@@ -4,9 +4,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import alanBtn from '@alan-ai/alan-sdk-web';
 import background from "./images/download.png";
+import musicGif from "./images/jakeMusic.gif"
 import './App.css';
 import $ from 'jquery';
-import { ListGroup } from 'react-bootstrap';
+import { Container, ListGroup } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Image from 'react-bootstrap/Image';
 
 
 const alanKey = '08dd587b9900d0225d9ec940df3f5af82e956eca572e1d8b807a3e2338fdd0dc/stage';
@@ -19,6 +22,7 @@ const App = () => {
   const [inputText, setInputText] = useState("");
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [posted, setPosted] = useState(false);
 
 
       //Sets input Text
@@ -48,13 +52,13 @@ const App = () => {
 
     };
 
-    //Need to make one function (instead of duplicate code)
     function loadingAnimation() {
 
       $('.title').addClass('animate__animated animate__fadeOut');
       $('.form-rounded').addClass('animate__animated animate__fadeOutUp');
       $('.submitBtn').addClass('animate__animated animate__fadeOutDown');
-      setTimeout(function(){ setLoading(true); }, 1000);
+      setTimeout(function(){ setLoading(true); }, 2000);
+      $('.music').addClass('animate__animated animate__fadeIn');
       $('.spinner').addClass('animate__animated animate__fadeIn');
 
 
@@ -118,9 +122,16 @@ function makePlaylist(search_str) {
   }
   var songArray = JSON.parse(response);
   console.log(songArray);
-  setLoading(false);
+
+  
+  $('.music').removeClass('animate__animated animate__fadeIn');
+  $('.spinner').removeClass('animate__animated animate__fadeIn');
+  $('.music').addClass('animate__animated animate__fadeOut');
+  $('.spinner').addClass('animate__animated animate__fadeOut');
+
   $('.spotifyButton').addClass("animate__animated animate__fadeInDown").attr("hidden", false);
-  var songList = $('ul.songList').attr("hidden", false);
+
+  var songList = $('ul.songList').addClass("animate__animated animate__fadeIn").attr("hidden", false);
   songArray.forEach(element => {
 
     var li = $('<ListGroupItem as="li" bsClass="customList"/>')
@@ -132,12 +143,12 @@ function makePlaylist(search_str) {
         .appendTo(li);
     
   });
-
+  setLoading(false);
   $('.animate__animated animate__fadeInDown').remove()
   $('.searchbar').remove()
   $('.submitBtn').remove()
   $('.title').removeClass("animate__animated animate__fadeOut")
-  $('.title').css("margin-top", '40px')
+  $('.title').css("margin-top", '80px')
   $('.title').addClass("animate__animated animate__fadeInDown")
 
 
@@ -163,13 +174,16 @@ function postPlaylist(ans) {
 }).catch(function(error) {
     console.log(error);
 });
+  setPosted(true);
+  alan.playText("Done.");
+
 }
 
   return (
       <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
         <header className="App-header">
           <div className="animate__animated animate__fadeIn">
-            <h1 className="title">Seamless</h1>
+            <h1 className="title" id="titleLink"><a href="/">Seamless</a></h1>
           </div>
         <div className="animate__animated animate__fadeInDown">
           <Form id="searchForm" noValidate validated={validated} onSubmit={submitHandler}>
@@ -185,8 +199,15 @@ function postPlaylist(ans) {
           <Button form="searchForm" className="submitBtn" size="lg" variant="success" type="submit">Submit</Button>{''}
         </div>
         <div className="addToSpotify">
-          <Button className="spotifyButton" hidden={true} size="lg" variant="success" type="button" onClick={() => postPlaylist('True')}>Add to Spotify</Button>{''}
-          <Button className="spotifyButton" hidden={true} size="lg" variant="success" type="button" onClick={refreshPage}>Create Another</Button>{''}
+          <Container>
+            <Row className="justify-content-center" md="auto" >
+              <Button className="spotifyButton" hidden={true} size="lg" variant="success" type="button" disabled={posted} onClick={() => { setPosted(true); postPlaylist('True'); }}>{posted ? 'Done!':'Add to Spotify' }</Button>{''}
+              <Button className="spotifyButton" hidden={true} size="lg" variant="success" type="button" onClick={refreshPage}>Create Another</Button>{''}
+            </Row>
+           </Container>
+        </div>
+        <div>
+          <Image className="music" src={musicGif} roundedCircle={true} hidden={!loading}></Image>
         </div>
         <div className="spinner" hidden={!loading}>
           <div className="rect1"></div>

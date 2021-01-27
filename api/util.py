@@ -36,7 +36,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .4, float(value) + .4, .001))
+    danceRange = list(np.arange(float(value) - .2, float(value) + .25, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -44,7 +44,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 5
+    rangeVal = 4
 
     halfBPM = int(value/2)
 
@@ -62,7 +62,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .35, float(value) + .35, .001))
+    valenceRange = list(np.arange(float(value) - .3, float(value) + .4, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
@@ -70,7 +70,7 @@ def calcValenceRange(value):
 
 def calcSpeechRange(value):
 
-    speechRange = list(np.arange(float(value) - .5, float(value) + .5, .0001))
+    speechRange = list(np.arange(float(value) - .3, float(value) + .5, .0001))
 
     roundedSpeech = [round(x, 3) for x in speechRange]
 
@@ -79,7 +79,7 @@ def calcSpeechRange(value):
 def calcYearRange(value):
 
     songYear = int(value)
-    songYRange1 = songYear - 2
+    songYRange1 = songYear - 1
     songYRange2 = songYear + 4
 
     return list(range(songYRange1, songYRange2))

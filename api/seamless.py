@@ -115,8 +115,8 @@ def relatedArtists(genSong):
 def artistAlbums(dictionary, genSong):
 
     songYear = int(genSong.year)
-    songYRange1 = songYear - 3
-    songYRange2 = songYear + 3
+    songYRange1 = songYear - 1
+    songYRange2 = songYear + 4
 
     albums = []
 
@@ -140,6 +140,7 @@ def artistAlbums(dictionary, genSong):
     print("ALBUM NAMES: ")
     print(albumList.values())
     print("CHECKED ALBUMS: ")
+    random.shuffle(util.checkedAlbums)
     print(util.checkedAlbums)
 
     return albumList
@@ -205,7 +206,7 @@ def getTracks(albumList, genSong, limit):
                         if track.album == songObj.album:
                             count += 1
                     
-                    if count > 2:
+                    if count >= 2:
                         print("Artist/Song in list thrice, not adding...")
                     else:
                         if len(util.albumtracks) == limit:

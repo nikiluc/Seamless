@@ -56,6 +56,12 @@ a:hover {
   text-decoration: none; /* no underline */
 }
 
+#titleLink a:hover{
+  color: whitesmoke;
+  text-decoration: none;
+
+}
+
 .list-group-item{
 
   background-color: transparent;
@@ -95,6 +101,7 @@ a:hover {
   margin-top: 20px;
   border-radius: 2rem;
   min-width: 16vmin;
+  font-size: 20px;
 
 }
 
@@ -107,6 +114,7 @@ a:hover {
   margin-top: 10px;
   border-radius: 2rem;
   min-width: 16vmin;
+  font-size: 20px;
 
 }
 
@@ -115,7 +123,6 @@ a:hover {
   font-family: vegan_style_personal_useRg;
   font-size: calc(10px + 15vmin);
   text-shadow: 2px 2px 4px #000000;
-  margin-bottom: 0px;
 }
 
 .animate__animated.animate__fadeInDown {
@@ -132,6 +139,7 @@ a:hover {
 
 .spinner {
   position: fixed;
+  bottom: 120px;
   margin: 100px auto;
   width: 100px;
   height: 40px;
@@ -200,107 +208,16 @@ a:hover {
   margin-top: -80px;
 }
 
-@keyframes flickerAnimation {
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-o-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-moz-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-webkit-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-.animate-flicker {
-  color: white;
-   -webkit-animation: flickerAnimation 2s infinite;
-   -moz-animation: flickerAnimation 2s infinite;
-   -o-animation: flickerAnimation 2s infinite;
-    animation: flickerAnimation 2s infinite;
-}
+.music {
+  border: solid;
+  border-color: whitesmoke;
+  position: relative;
+  display: block;
+  width: 38%;
+  height: 40%;
 
-/* Testing out loading animation */
+  bottom: 150px;
+  right: -157px
 
-.js-loading {
-	display: none;
-	text-align: center;
-	font-size: 1.125em;
-	color: #fff;
-	fill: #fff;
-	margin-top: 2em
-}
 
-@media (min-width:48em) {
-	.js-loading {
-		font-size: 1.625em;
-		margin-top: 2em
-	}
-}
-
-@media (min-width:50em) {
-	.js-loading {
-		margin-top: 3em
-	}
-}
-
-.js-loading ul {
-	position: relative
-}
-
-.js-loading li {
-	transition: transform .2s ease-out, opacity .15s linear .05s;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	opacity: 0;
-	transform: translate3d(0, 100%, 0)
-}
-
-.js-loading li.active {
-	transition: transform .3s ease-out .05s, opacity .225s linear 75ms;
-	opacity: 1;
-	transform: translateZ(0)
-}
-
-.js-loading li.last {
-	transform: translate3d(0, -100%, 0)
-}
-
-.js-loading i {
-	width: 1.65em;
-	height: 1.65em;
-	margin-right: .23em
-}
-
-.js-loading span {
-	padding-top: .25em
-}
-
-.js-loading i,
-.js-loading span {
-	display: inline-block;
-	vertical-align: top
-}
-
-.loading .input-wrap {
-	display: none
-}
-
-.loading .js-loading {
-	display: block
-}
-
-.input-wrap-outer {
-	position: relative;
-	text-align: center
 }

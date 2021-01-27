@@ -38,3 +38,5 @@ def postPlaylist():
         return str(res)
 
 
+if __name__== '__main__':
+    app.run()

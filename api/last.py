@@ -52,7 +52,7 @@ def validTracks(genSong, songObj):
 
         try:
             # LastFM match value
-            if matchData > 0.4:
+            if matchData > 0.3:
                 data2 = seamless.getSongData(songInfo)
                 songObj2 = seamless.makeSongFromID(data2)
                 util.artistDict.update(({songObj2.artist: songObj2.a_id}))
@@ -154,7 +154,7 @@ def launch(search_str):
 
 if __name__ == "__main__":
 
-    random.seed(datetime.now())
+    random.seed()
 
     launch(search_str="starving zedd")
 
