@@ -10,6 +10,8 @@ import $ from 'jquery';
 import { Container, ListGroup } from 'react-bootstrap';
 import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
+import Alert from 'react-bootstrap/Alert';
+import Modal from 'react-bootstrap/Modal'
 
 
 const alanKey = '08dd587b9900d0225d9ec940df3f5af82e956eca572e1d8b807a3e2338fdd0dc/stage';
@@ -23,49 +25,81 @@ const App = () => {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
+  const [alert, showAlert] = useState(false);
 
 
       //Sets input Text
-    const inputTextHandler = (e) =>{
-      setInputText(e.target.value);
-    };
+  const inputTextHandler = (e) =>{
+    setInputText(e.target.value);
+  };
 
-      //Final Typed Query from user
-    const submitHandler = (e) =>{
-      if (e.target.checkValidity() === false) {
+    //Final Typed Query from user
+  const submitHandler = (e) =>{
+    if (e.target.checkValidity() === false) {
 
-        e.preventDefault();
+      e.preventDefault();
 
-      }
-      else {
-        e.preventDefault();
-        setSubmit(inputText);
-        console.log(inputText);
-        loadingAnimation();
-        makePlaylist(inputText);
-        setLoading(false);
-
-
-      }
-
-      setValidated(true);
-
-    };
-
-    function loadingAnimation() {
-
-      $('.title').addClass('animate__animated animate__fadeOut');
-      $('.form-rounded').addClass('animate__animated animate__fadeOutUp');
-      $('.submitBtn').addClass('animate__animated animate__fadeOutDown');
-      setTimeout(function(){ setLoading(true); }, 2000);
-      $('.music').addClass('animate__animated animate__fadeIn');
-      $('.spinner').addClass('animate__animated animate__fadeIn');
+    }
+    else {
+      e.preventDefault();
+      setSubmit(inputText);
+      console.log(inputText);
+      loadingAnimation();
+      makePlaylist(inputText);
+      setLoading(false);
 
 
     }
 
-    function refreshPage(){ 
-      window.location.reload(); 
+    setValidated(true);
+
+  };
+
+  function loadingAnimation() {
+
+    $('.title').addClass('animate__animated animate__fadeOut');
+    $('.form-rounded').addClass('animate__animated animate__fadeOutUp');
+    $('.submitBtn').addClass('animate__animated animate__fadeOutDown');
+    setTimeout(function(){ setLoading(true); }, 2000);
+    $('.music').addClass('animate__animated animate__fadeIn');
+    $('.spinner').addClass('animate__animated animate__fadeIn');
+
+
+  }
+
+  function loadResults(songArray){
+
+    $('.music').removeClass('animate__animated animate__fadeIn');
+    $('.spinner').removeClass('animate__animated animate__fadeIn');
+    $('.music').addClass('animate__animated animate__fadeOut');
+    $('.spinner').addClass('animate__animated animate__fadeOut');
+  
+    $('.spotifyButton').addClass("animate__animated animate__fadeInDown").attr("hidden", false);
+  
+    var songList = $('ul.songList').addClass("animate__animated animate__fadeIn").attr("hidden", false);
+    songArray.forEach(element => {
+  
+      var li = $('<ListGroupItem as="li" bsClass="customList"/>')
+          .addClass("animate__animated animate__fadeInUp")
+          .appendTo(songList);
+      var aaa = $('<a href=' + element['externalURL'] + ' target="_blank" rel="noopener noreferrer"' +'/>')
+          .addClass('list-group-item')
+          .text(element['title'] + ' by ' + element['artist'])
+          .appendTo(li);
+      
+    });
+    setLoading(false);
+    $('.animate__animated animate__fadeInDown').remove()
+    $('.searchbar').remove()
+    $('.submitBtn').remove()
+    $('.title').removeClass("animate__animated animate__fadeOut")
+    $('.title').css("margin-top", '80px')
+    $('.title').addClass("animate__animated animate__fadeInDown")
+
+  }
+
+  function refreshPage(){ 
+    window.location.reload(); 
   }
 
 
@@ -104,53 +138,28 @@ function makePlaylist(search_str) {
     body: JSON.stringify({search_str}),
   }).then(function(response) {
     if (!response.ok) {
-        throw Error(response.statusText);
+      //throw Error(response.statusText);
+      showAlert(true);
+      setTimeout(function(){ refreshPage(); }, 4000);
     }
     return response.text();
 }).then(function(response) {
     if (inputText === "") {
 
-    alan.activate();
-    alan.callProjectApi("setClientData1", { value: response }, function (error, result) {
-      if (error) {
-          console.error(error);
-          return;
-      }
-      console.log(result);
+      alan.activate();
+      alan.callProjectApi("setClientData1", { value: response }, function (error, result) {
+        if (error) {
+            console.error(error);
+            return;
+        }
+        console.log(result);
     });
 
   }
   var songArray = JSON.parse(response);
   console.log(songArray);
 
-  
-  $('.music').removeClass('animate__animated animate__fadeIn');
-  $('.spinner').removeClass('animate__animated animate__fadeIn');
-  $('.music').addClass('animate__animated animate__fadeOut');
-  $('.spinner').addClass('animate__animated animate__fadeOut');
-
-  $('.spotifyButton').addClass("animate__animated animate__fadeInDown").attr("hidden", false);
-
-  var songList = $('ul.songList').addClass("animate__animated animate__fadeIn").attr("hidden", false);
-  songArray.forEach(element => {
-
-    var li = $('<ListGroupItem as="li" bsClass="customList"/>')
-        .addClass("animate__animated animate__fadeInUp")
-        .appendTo(songList);
-    var aaa = $('<a href=' + element['externalURL'] + ' target="_blank" rel="noopener noreferrer"' +'/>')
-        .addClass('list-group-item')
-        .text(element['title'] + ' by ' + element['artist'])
-        .appendTo(li);
-    
-  });
-  setLoading(false);
-  $('.animate__animated animate__fadeInDown').remove()
-  $('.searchbar').remove()
-  $('.submitBtn').remove()
-  $('.title').removeClass("animate__animated animate__fadeOut")
-  $('.title').css("margin-top", '80px')
-  $('.title').addClass("animate__animated animate__fadeInDown")
-
+  loadResults(songArray);
 
   });
 }
@@ -183,7 +192,7 @@ function postPlaylist(ans) {
       <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
         <header className="App-header">
           <div className="animate__animated animate__fadeIn">
-            <h1 className="title" id="titleLink"><a href="/">Seamless</a></h1>
+            <h1 className="title" id="titleLink" >Seamless</h1>
           </div>
         <div className="animate__animated animate__fadeInDown">
           <Form id="searchForm" noValidate validated={validated} onSubmit={submitHandler}>
@@ -205,6 +214,19 @@ function postPlaylist(ans) {
               <Button className="spotifyButton" hidden={true} size="lg" variant="success" type="button" onClick={refreshPage}>Create Another</Button>{''}
             </Row>
            </Container>
+        </div>
+        <div className="errorModal">
+          <Modal size="lg" show={alert} onHide={!alert}>
+            <Modal.Header closeButton>
+              <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Oops! Something went wrong. Refreshing the page in a few seconds...</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={ () => {showAlert(false);}}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
         <div>
           <Image className="music" src={musicGif} roundedCircle={true} hidden={!loading}></Image>

@@ -52,7 +52,7 @@ def validTracks(genSong, songObj):
 
         try:
             # LastFM match value
-            if matchData > 0.3:
+            if matchData > 0.35:
                 data2 = seamless.getSongData(songInfo)
                 songObj2 = seamless.makeSongFromID(data2)
                 util.artistDict.update(({songObj2.artist: songObj2.a_id}))
@@ -67,31 +67,31 @@ def validTracks(genSong, songObj):
     
     loudnessRange = util.calcLoudnessRange(float(genSong.loudness))
     tempoRange = util.calcTempoRange(int(genSong.tempo))
+    popRange = util.calcPopularityRange(float(genSong.popularity))
     energyRange = util.calcEnergyRange(float(genSong.energy))
     danceabilityRange = util.calcDanceabilityRange(float(genSong.danceability))
     valenceRange = util.calcValenceRange(float(genSong.valence))
     speechRange = util.calcSpeechRange(float(genSong.speechiness))
-    yearRange = util.calcYearRange(int(genSong.year))
+    yearRange = util.calcYearRange(int(util.year))
 
     for track in valid:
         print("TRACK IN: " + track.title)
     
     # Songs that satisfy the requirements
-    tempoValid = [song for song in valid if int(song.tempo) in tempoRange
-    and float(song.energy) in energyRange
+    reqValid = [song for song in valid if int(song.tempo) in tempoRange
     and float(song.danceability) in danceabilityRange
-    and float(song.valence) in valenceRange
-    and float(song.speechiness) in speechRange
-    and float(song.loudness) in loudnessRange
+    and float(song.energy) in energyRange
+    and float(song.popularity) in popRange
     and int(song.year) in yearRange]
 
+    # Songs that at least match the tempo (last resort)
+    util.tempotracks = [song for song in valid if int(song.tempo) in tempoRange]
 
-    for track in tempoValid:
+    for track in reqValid:
         if track in util.albumtracks:
             print("TRACK IN: " + track.title)
-        else:
-            if len(util.albumtracks) < 10:
-                util.albumtracks.append(track)
+        if len(util.albumtracks) < 10:
+            util.albumtracks.append(track)
     
 
     print([song.title for song in util.albumtracks])
@@ -119,6 +119,8 @@ def launch(search_str):
     data = seamless.getSongData(search_str)
     songObj = seamless.makeSongFromID(data)
 
+    util.year = songObj.year
+
     util.albumtracks.append(songObj)
     validTracks(songObj, songObj)
 
@@ -136,6 +138,7 @@ def launch(search_str):
             songData = random.sample(util.albumtracks, 1)[0]
             if len(util.albumtracks) == len(util.alreadyChosenFM):
                seamless.main(spUser, user_id)
+               limit = len(util.albumtracks)
                break
 
         if len(util.albumtracks) < limit:

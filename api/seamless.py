@@ -29,6 +29,7 @@ def makeSongFromID(songID):
     year = trackdata['album']['release_date'][:4]
     artist = trackdata['album']['artists'][0]['name']
     a_id = trackdata['album']['artists'][0]['id']
+    popularity = trackdata['popularity']
     availableMarkets = trackdata['album']['available_markets']
     externalURL = trackdata['external_urls']['spotify']
     imgURL = trackdata['album']['images'][2]['url']
@@ -39,6 +40,7 @@ def makeSongFromID(songID):
     songData.append(a_id)
     songData.append(year)
     songData.append(albumName)
+    songData.append(popularity)
     songData.append(availableMarkets)
     songData.append(externalURL)
     songData.append(imgURL)
@@ -88,9 +90,37 @@ def getSongInfo(songStats):
         mode = features[0]['mode']
 
     # Final song object
-    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], songStats[7], songStats[8], tempo, loudness, danceability, energy, valence, speechiness, mode)
+    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], songStats[7], songStats[8], songStats[9], tempo, loudness, danceability, energy, valence, speechiness, mode)
 
     return genSong
+
+#Check to see if song is in tempo range (most important factor)
+#If it is, then it'll be made into a song obect
+def tempoCheck(songID, tempoRange):
+
+    try:
+        features = sp.audio_features('spotify:track:' + songID)
+
+    except requests.exceptions.Timeout:
+        features = sp.audio_features('spotify:track:' + songID)
+
+    
+        # Cases where API does not return any data for song ID
+    if features == [None]:
+        tempo = 0
+
+    else:
+        tempo = features[0]['tempo']
+
+
+    if int(tempo) not in tempoRange:
+        print("Not in range...")
+        return False
+    else:
+        print("In range...")
+        print(tempoRange)
+        return True
+
 
 # Retrieves related artists of the artist for the user's song
 # Returns dictionary of artist IDs and names
@@ -104,7 +134,9 @@ def relatedArtists(genSong):
 
     numArtists = len(jsonData['artists'])
 
-    for i in range(numArtists):
+    test = 7
+
+    for i in range(test):
         key = jsonData['artists'][i]['name']
         value = jsonData['artists'][i]['id']
         util.artistDict.update({key: value})
@@ -114,9 +146,9 @@ def relatedArtists(genSong):
 # Finds albums published within the correct time frame
 def artistAlbums(dictionary, genSong):
 
-    songYear = int(genSong.year)
-    songYRange1 = songYear - 1
-    songYRange2 = songYear + 4
+    songYear = int(util.year)
+    songYRange1 = songYear - 2
+    songYRange2 = songYear + 3
 
     albums = []
 
@@ -137,8 +169,9 @@ def artistAlbums(dictionary, genSong):
                     albumList.update({album['name']: album['id']})
     
 
+    print(util.year)
     print("ALBUM NAMES: ")
-    print(albumList.values())
+    print(albumList.keys())
     print("CHECKED ALBUMS: ")
     random.shuffle(util.checkedAlbums)
     print(util.checkedAlbums)
@@ -155,6 +188,7 @@ def getTracks(albumList, genSong, limit):
     # creates of range of values that songs must be in to be added to the playlist
     tempoRange = util.calcTempoRange(int(genSong.tempo))
     loudRange = util.calcLoudnessRange(genSong.loudness)
+    popRange = util.calcPopularityRange(genSong.popularity)
     danceRange = util.calcDanceabilityRange(genSong.danceability)
     energyRange = util.calcEnergyRange(genSong.energy)
     valenceRange = util.calcValenceRange(genSong.valence)
@@ -176,47 +210,55 @@ def getTracks(albumList, genSong, limit):
 
             songID = result['items'][i]['id']
 
-            try:
-                songObj = makeSongFromID(songID)
+            if (tempoCheck(songID, tempoRange)):
 
-            except requests.exceptions.Timeout:
+                try:
+                    songObj = makeSongFromID(songID)
 
-                songObj = makeSongFromID(songID)
+                except requests.exceptions.Timeout:
 
-            tempo = int(songObj.tempo)
-            loudness = float(songObj.loudness)
-            danceability = float(songObj.danceability)
-            energy = float(songObj.energy)
-            valence = float(songObj.valence)
-            speech = float(songObj.speechiness)
-            #mode = songObj.mode # Unused 
+                    songObj = makeSongFromID(songID)
 
-            if (tempo in tempoRange and loudness in loudRange
-                and danceability in danceRange and energy in energyRange
-                and valence in valenceRange and speech in speechRange):
+                tempo = int(songObj.tempo)
+                loudness = float(songObj.loudness)
+                popularity = float(songObj.popularity)
+                danceability = float(songObj.danceability)
+                energy = float(songObj.energy)
+                valence = float(songObj.valence)
+                speech = float(songObj.speechiness)
+                #mode = songObj.mode # Unused 
 
-                if songObj in util.albumtracks:
-                    print("Already in list, not adding...")
-                else:
-                    # measure to prevent artists from appearing in the playlist too many times
-                    count = 0
-                    for track in util.albumtracks:
-                        if track.title == songObj.title:
-                            count += 3
-                        if track.album == songObj.album:
-                            count += 1
-                    
-                    if count >= 2:
-                        print("Artist/Song in list thrice, not adding...")
+                if (popularity in popRange
+                    and danceability in danceRange and energy in energyRange):
+
+                    if songObj in util.albumtracks:
+                        print("Already in list, not adding...")
                     else:
-                        if len(util.albumtracks) == limit:
-                            break
-                        # only working with songs available in the US (for now)
-                        if 'US' in songObj.availableMarkets:
-                            songObj.printInfo()
-                            util.albumtracks.append(songObj)
+                        # measure to prevent artists from appearing in the playlist too many times
+                        count = 0
+                        for track in util.albumtracks:
+                            if track.title == songObj.title:
+                                count += 3
+                            if track.album == songObj.album:
+                                count += 1
+                            if track.artist == songObj.artist:
+                                count += 1
+                        
+                        if count > 2:
+                            print("Artist/Song in list thrice, not adding...")
                         else:
-                            continue
+                            if len(util.albumtracks) == limit:
+                                break
+                            # only working with songs available in the US (for now)
+                            if 'US' in songObj.availableMarkets:
+                                songObj.printInfo()
+                                util.albumtracks.append(songObj)
+                            else:
+                                continue
+            
+            else:
+
+                continue
 
         # maximum amount of songs in a playlist                       
         if len(util.albumtracks) == limit:
@@ -286,6 +328,13 @@ def main(spUser, user_id):
         # All the songs on the list have been chosen already 
         if len(util.alreadyChosenSP) == len(util.albumtracks):
             print("Sorry! Couldn't find more songs")
+
+            for track in util.tempotracks: 
+                if len(util.albumtracks) < limit:
+                    util.albumtracks.append(track)
+                else:
+                    break
+
             
             #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
             break
@@ -294,5 +343,7 @@ def main(spUser, user_id):
     #util.albumtracks = sorted(util.albumtracks, key=operator.attrgetter("valence"))
 
     #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
+
+
 
 
