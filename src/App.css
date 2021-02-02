@@ -1,4 +1,3 @@
-
 .App {
   text-align: center;
 }
@@ -14,7 +13,7 @@
   }
 }
 
-.App-header {
+.main-div {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -32,6 +31,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -40,7 +40,7 @@
 @font-face {
   font-family: 'vegan_style_personal_useRg';
   src: url('fonts/veganstylepersonaluse-5y58-webfont.woff2') format('woff2'),
-       url('fonts/veganstylepersonaluse-5y58-webfont.woff') format('woff');
+    url('fonts/veganstylepersonaluse-5y58-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 
@@ -48,28 +48,30 @@
 
 a {
   color: whitesmoke;
-  text-decoration: none; /* no underline */
+  text-decoration: none;
+  /* no underline */
 }
 
 a:hover {
   color: #1DB954;
-  text-decoration: none; /* no underline */
+  text-decoration: none;
+  /* no underline */
 }
 
-#titleLink a:hover{
+#titleLink a:hover {
   color: whitesmoke;
   text-decoration: none;
 
 }
 
-.list-group-item{
+.list-group-item {
 
   background-color: transparent;
   border-radius: 2rem 2rem 0rem 0rem;
   min-height: 0vmin;
   min-width: 80vmin;
   font-size: 20px;
-  
+
 
 }
 
@@ -95,10 +97,10 @@ a:hover {
   min-width: 80vmin;
 }
 
-.submitBtn{
+.submitBtn {
   background-color: #1DB954;
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.39), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
-  margin-top: 20px;
+  
   border-radius: 2rem;
   min-width: 16vmin;
   font-size: 20px;
@@ -118,7 +120,7 @@ a:hover {
 
 }
 
-.title{
+.title {
   color: whitesmoke;
   font-family: vegan_style_personal_useRg;
   font-size: calc(10px + 15vmin);
@@ -148,14 +150,14 @@ a:hover {
 
 }
 
-.spinner > div {
+.spinner>div {
   width: 7px;
-	margin: 0 3px 0 0;
+  margin: 0 3px 0 0;
   background-color: rgb(218, 216, 216);
   height: 100%;
   width: 10px;
   display: inline-block;
-  
+
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }
@@ -181,15 +183,28 @@ a:hover {
 }
 
 @-webkit-keyframes sk-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
-  20% { -webkit-transform: scaleY(1.0) }
+
+  0%,
+  40%,
+  100% {
+    -webkit-transform: scaleY(0.4)
+  }
+
+  20% {
+    -webkit-transform: scaleY(1.0)
+  }
 }
 
 @keyframes sk-stretchdelay {
-  0%, 40%, 100% { 
+
+  0%,
+  40%,
+  100% {
     transform: scaleY(0.4);
     -webkit-transform: scaleY(0.4);
-  }  20% { 
+  }
+
+  20% {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
@@ -218,6 +233,4 @@ a:hover {
 
   bottom: 150px;
   right: -157px
-
-
 }

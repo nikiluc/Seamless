@@ -119,6 +119,7 @@ def tempoCheck(songID, tempoRange):
     else:
         print("In range...")
         print(tempoRange)
+
         return True
 
 
@@ -134,6 +135,7 @@ def relatedArtists(genSong):
 
     numArtists = len(jsonData['artists'])
 
+    #Temporary
     test = 7
 
     for i in range(test):
@@ -256,9 +258,18 @@ def getTracks(albumList, genSong, limit):
                             else:
                                 continue
             
+                else:
+
+                    if (popularity in popRange and energy in energyRange):
+                        if songObj in util.albumtracks:
+                            print("Already in list, not adding...")
+                        else:
+                            util.tempotracks.append(songObj)
+                            print("ADDED TO TEMPO TRACKS")
             else:
 
                 continue
+
 
         # maximum amount of songs in a playlist                       
         if len(util.albumtracks) == limit:
@@ -277,15 +288,17 @@ def genPlaylist(tracks, title, sp, user_id):
     for track in tracks:
         tracklist.append(track.id)
         print(track.title + " " + str(track.tempo))
+    
+    playlistTitle = "Seamless: " + title
 
     # Playlist creation on user's spotify account
-    sp.user_playlist_create(user_id, title)
+    sp.user_playlist_create(user_id, playlistTitle)
     playlists = sp.user_playlists(user_id)
 
     playlistID = ''
 
     for playlist in playlists['items']:
-        if playlist['name'] == title:
+        if playlist['name'] == playlistTitle:
             playlistID = playlist['id']
     
     # Adding tracks to newly created playlist
@@ -328,6 +341,8 @@ def main(spUser, user_id):
         # All the songs on the list have been chosen already 
         if len(util.alreadyChosenSP) == len(util.albumtracks):
             print("Sorry! Couldn't find more songs")
+
+            random.shuffle(util.tempotracks)
 
             for track in util.tempotracks: 
                 if len(util.albumtracks) < limit:

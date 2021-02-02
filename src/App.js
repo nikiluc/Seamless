@@ -27,6 +27,42 @@ const App = () => {
   const [posted, setPosted] = useState(false);
   const [alert, showAlert] = useState(false);
 
+  //Trying to set up autocomplete....will finish tomorrow
+  $(function() {
+
+    window.$('#autocomplete').autocomplete({
+      source: function(request, response) {
+      window.$.ajax({
+          type: "GET",
+          url: "https://api.spotify.com/v1/search",
+          dataType: "json",
+          data: {
+              type: "artist",
+              limit: 3,
+              contentType: "application/json; charset=utf-8",
+              format: "json",
+              q: request.term
+          },
+          success: function(data) {
+              response($.map(data.artists.items, function(item) {
+                  return {
+                      label: item.name,
+                      value: item.name,
+                      id: item.id
+                  }
+              }));
+          }
+      });
+  },
+  minLength: 3,
+  select: function(event, ui) {
+      $("#autocomplete").val(ui.item.value);
+      window.location.href = "#" + ui.item.value;
+  },
+});
+
+});
+
 
       //Sets input Text
   const inputTextHandler = (e) =>{
@@ -190,14 +226,14 @@ function postPlaylist(ans) {
 
   return (
       <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
-        <header className="App-header">
+        <div className="main-div">
           <div className="animate__animated animate__fadeIn">
             <h1 className="title" id="titleLink" >Seamless</h1>
           </div>
         <div className="animate__animated animate__fadeInDown">
           <Form id="searchForm" noValidate validated={validated} onSubmit={submitHandler}>
             <Form.Group className="searchbar">
-              <Form.Control className="form-rounded" value={inputText} size="lg" type="text" placeholder="Enter an artist and song :)" onChange={inputTextHandler} required={true}/>
+              <Form.Control className="form-rounded" id="autocomplete" value={inputText} size="lg" type="text" placeholder="Enter an artist and song :)" onChange={inputTextHandler} required={true}/>
               <Form.Control.Feedback type="invalid">
                 Please enter a song and artist.
               </Form.Control.Feedback>
@@ -216,7 +252,7 @@ function postPlaylist(ans) {
            </Container>
         </div>
         <div className="errorModal">
-          <Modal size="lg" show={alert} onHide={!alert}>
+          <Modal size="lg" show={alert} >
             <Modal.Header closeButton>
               <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -243,7 +279,7 @@ function postPlaylist(ans) {
           <ListGroup as="ul" className="songList" hidden={true}>
           </ListGroup>
         </div>
-        </header>
+        </div>
         <footer className="footer">
           <div className="tech">
             <p></p>

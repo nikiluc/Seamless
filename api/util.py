@@ -32,7 +32,7 @@ def calcLoudnessRange(value):
 
 def calcPopularityRange(value):
 
-    popRange = list(np.arange(float(value) - 25, float(value) + 35, 1))
+    popRange = list(np.arange(float(value) - 20, float(value) + 35, 1))
 
     roundedPopularity = [round(x, 3) for x in popRange]
 
@@ -56,7 +56,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 6
+    rangeVal = 4
 
     halfBPM = int(value/2)
 

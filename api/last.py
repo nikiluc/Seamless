@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import pylast
@@ -6,23 +7,27 @@ import pprint
 import util
 import random
 import time
+from dotenv import load_dotenv
 from song import Song
 from datetime import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # Authentication for LastFM API
-USER_AGENT = 'nikiluc'
-API_KEY = '846582a62ca98c795f915ab5f4a9cfa1'
-API_SECRET = "41e8df4034b1d349d141d618111a05f3"
+USER_AGENT = os.getenv('USER_AGENT')
+API_KEY = os.getenv('API_KEY')
+API_SECRET = os.getenv('API_SECRET')
 
-username = "nikiluc"
-password_hash = pylast.md5("Nikiluc1!")
+username = os.getenv('username')
+password = os.getenv('password')
+password_hash = pylast.md5(password)
 
 network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
                                username=username, password_hash=password_hash)
 
 # Gets similar tracks through last FM API
+
+
 def lastfm_get(payload):
     # define headers and URL
     headers = {'user-agent': USER_AGENT}
@@ -37,6 +42,8 @@ def lastfm_get(payload):
     return response
 
 # Choosing tracks that satisfy the requiremnts
+
+
 def validTracks(genSong, songObj):
 
     valid = []
@@ -47,7 +54,8 @@ def validTracks(genSong, songObj):
 
     for i in range(len(new_data['similartracks']['track'])):
 
-        songInfo = new_data['similartracks']['track'][i]['name'] + ' ' + new_data['similartracks']['track'][i]['artist']['name']
+        songInfo = new_data['similartracks']['track'][i]['name'] + \
+            ' ' + new_data['similartracks']['track'][i]['artist']['name']
         matchData = float(new_data['similartracks']['track'][i]['match'])
 
         try:
@@ -64,7 +72,7 @@ def validTracks(genSong, songObj):
 
         except:
             pass
-    
+
     loudnessRange = util.calcLoudnessRange(float(genSong.loudness))
     tempoRange = util.calcTempoRange(int(genSong.tempo))
     popRange = util.calcPopularityRange(float(genSong.popularity))
@@ -76,37 +84,42 @@ def validTracks(genSong, songObj):
 
     for track in valid:
         print("TRACK IN: " + track.title)
-    
+
     # Songs that satisfy the requirements
     reqValid = [song for song in valid if int(song.tempo) in tempoRange
-    and float(song.danceability) in danceabilityRange
-    and float(song.energy) in energyRange
-    and float(song.popularity) in popRange
-    and int(song.year) in yearRange]
+                and float(song.danceability) in danceabilityRange
+                and float(song.energy) in energyRange
+                and float(song.popularity) in popRange
+                and int(song.year) in yearRange]
 
     # Songs that at least match the tempo (last resort)
-    util.tempotracks = [song for song in valid if int(song.tempo) in tempoRange]
+    util.tempotracks = [
+        song for song in valid if int(song.tempo) in tempoRange]
 
     for track in reqValid:
         if track in util.albumtracks:
             print("TRACK IN: " + track.title)
         if len(util.albumtracks) < 10:
             util.albumtracks.append(track)
-    
 
     print([song.title for song in util.albumtracks])
 
-# Uses search string to find similar songs 
+# Uses search string to find similar songs
+
+
 def launch(search_str):
 
-    #Authentication to create playlist
+    load_dotenv()
+
+    # Authentication to create playlist
     scope = 'playlist-modify-public'
     spUser = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
     user_id = spUser.me()['id']
 
     if (search_str == "True"):
-        seamless.genPlaylist(util.albumtracks, util.albumtracks[0].title, spUser, user_id)
+        seamless.genPlaylist(
+            util.albumtracks, util.albumtracks[0].title, spUser, user_id)
         return True
 
     # initialization of global variables
@@ -137,22 +150,19 @@ def launch(search_str):
         while songData in util.alreadyChosenFM:
             songData = random.sample(util.albumtracks, 1)[0]
             if len(util.albumtracks) == len(util.alreadyChosenFM):
-               seamless.main(spUser, user_id)
-               limit = len(util.albumtracks)
-               break
+                seamless.main(spUser, user_id)
+                limit = len(util.albumtracks)
+                break
 
         if len(util.albumtracks) < limit:
             validTracks(songData, songObj)
             util.alreadyChosenFM.append(songData)
 
-
     for track in util.albumtracks:
         print(track.title)
-    
+
     songsChosen = util.albumtracks
-
     return songsChosen
-
 
 
 if __name__ == "__main__":
@@ -160,8 +170,3 @@ if __name__ == "__main__":
     random.seed()
 
     launch(search_str="starving zedd")
-
-    
-
-
-
