@@ -32,7 +32,7 @@ def calcLoudnessRange(value):
 
 def calcPopularityRange(value):
 
-    popRange = list(np.arange(float(value) - 20, float(value) + 35, 1))
+    popRange = list(np.arange(float(value) - 30, float(value) + 35, 1))
 
     roundedPopularity = [round(x, 3) for x in popRange]
 
@@ -40,7 +40,7 @@ def calcPopularityRange(value):
 
 def calcEnergyRange(value):
 
-    energyRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    energyRange = list(np.arange(float(value) - .25, float(value) + .15, .001))
 
     roundedEnergy = [round(x, 3) for x in energyRange]
 
@@ -48,7 +48,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
+    danceRange = list(np.arange(float(value) - .25, float(value) + .35, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -56,7 +56,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 4
+    rangeVal = 5
 
     halfBPM = int(value/2)
 
@@ -92,7 +92,7 @@ def calcYearRange(value):
 
     songYear = int(value)
     songYRange1 = songYear - 2
-    songYRange2 = songYear + 3
+    songYRange2 = songYear + 4
 
     return list(range(songYRange1, songYRange2))
 

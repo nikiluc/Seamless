@@ -112,15 +112,13 @@ def tempoCheck(songID, tempoRange):
     else:
         tempo = features[0]['tempo']
 
-
-    if int(tempo) not in tempoRange:
-        print("Not in range...")
-        return False
-    else:
-        print("In range...")
-        print(tempoRange)
-
-        return True
+        if int(tempo) not in tempoRange:
+            print("Not in range...")
+            return False
+        else:
+            print("In range...")
+            print(tempoRange)
+            return True
 
 
 # Retrieves related artists of the artist for the user's song
@@ -136,7 +134,7 @@ def relatedArtists(genSong):
     numArtists = len(jsonData['artists'])
 
     #Temporary
-    test = 7
+    test = 5
 
     for i in range(test):
         key = jsonData['artists'][i]['name']
@@ -175,7 +173,6 @@ def artistAlbums(dictionary, genSong):
     print("ALBUM NAMES: ")
     print(albumList.keys())
     print("CHECKED ALBUMS: ")
-    random.shuffle(util.checkedAlbums)
     print(util.checkedAlbums)
 
     return albumList
@@ -212,7 +209,7 @@ def getTracks(albumList, genSong, limit):
 
             songID = result['items'][i]['id']
 
-            if (tempoCheck(songID, tempoRange)):
+            if (tempoCheck(songID, tempoRange) == True):
 
                 try:
                     songObj = makeSongFromID(songID)
@@ -260,12 +257,14 @@ def getTracks(albumList, genSong, limit):
             
                 else:
 
-                    if (popularity in popRange and energy in energyRange):
+                    if (energy in energyRange):
                         if songObj in util.albumtracks:
                             print("Already in list, not adding...")
                         else:
                             util.tempotracks.append(songObj)
                             print("ADDED TO TEMPO TRACKS")
+                    else:
+                        print("NOPE")
             else:
 
                 continue
@@ -346,7 +345,8 @@ def main(spUser, user_id):
 
             for track in util.tempotracks: 
                 if len(util.albumtracks) < limit:
-                    util.albumtracks.append(track)
+                    if track not in util.albumtracks:
+                        util.albumtracks.append(track)
                 else:
                     break
 

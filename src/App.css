@@ -141,8 +141,7 @@ a:hover {
 
 .spinner {
   position: fixed;
-  bottom: 120px;
-  margin: 100px auto;
+  bottom: 38%;
   width: 100px;
   height: 40px;
   text-align: center;
@@ -224,13 +223,47 @@ a:hover {
 }
 
 .music {
+  top: 70%;
   border: solid;
   border-color: whitesmoke;
   position: relative;
   display: block;
   width: 38%;
   height: 40%;
-
+  left: 31%;
   bottom: 150px;
-  right: -157px
+ 
 }
+
+
+body .ui-autocomplete{
+  background: transparent !important; 
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
+  border-radius: 2rem;
+  min-width: 80vmin;
+  max-width: 80vmin;
+  
+}
+
+.ui-menu-item{
+  background: transparent !important;
+  text-align: center;
+  padding: 8px !important;
+  color: white;
+  font-size: 17px;
+
+}
+
+
+.ui-menu-item-wrapper.ui-state-active {
+  background: transparent !important;
+  text-align: center;
+  color: white;
+  border-radius: 2rem;
+  border: solid;
+  border-color: #1DB954;
+} 
+
+
+
