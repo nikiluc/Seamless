@@ -40,7 +40,7 @@ def calcPopularityRange(value):
 
 def calcEnergyRange(value):
 
-    energyRange = list(np.arange(float(value) - .25, float(value) + .15, .001))
+    energyRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedEnergy = [round(x, 3) for x in energyRange]
 
@@ -56,7 +56,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 5
+    rangeVal = 4
 
     halfBPM = int(value/2)
 

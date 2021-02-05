@@ -134,10 +134,11 @@ def relatedArtists(genSong):
     numArtists = len(jsonData['artists'])
 
     #Temporary
-    test = 5
+    test = 7
 
     for i in range(test):
         key = jsonData['artists'][i]['name']
+        print(key)
         value = jsonData['artists'][i]['id']
         util.artistDict.update({key: value})
 
@@ -259,6 +260,7 @@ def getTracks(albumList, genSong, limit):
 
                     if (energy in energyRange):
                         if songObj in util.albumtracks:
+                            print(songObj.title)
                             print("Already in list, not adding...")
                         else:
                             util.tempotracks.append(songObj)
@@ -350,7 +352,8 @@ def main(spUser, user_id):
                 else:
                     break
 
-            
+            for track in util.albumtracks:
+                print(track.id)
             #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
             break
         

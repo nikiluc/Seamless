@@ -54,9 +54,11 @@ def validTracks(genSong, songObj):
 
     for i in range(len(new_data['similartracks']['track'])):
 
+
         songInfo = new_data['similartracks']['track'][i]['name'] + \
             ' ' + new_data['similartracks']['track'][i]['artist']['name']
         matchData = float(new_data['similartracks']['track'][i]['match'])
+
 
         try:
             # LastFM match value
@@ -91,6 +93,7 @@ def validTracks(genSong, songObj):
                 and float(song.energy) in energyRange
                 and float(song.popularity) in popRange
                 and int(song.year) in yearRange]
+    
 
     # Songs that at least match the tempo (last resort)
     util.tempotracks = [
@@ -132,10 +135,13 @@ def launch(search_str):
     data = seamless.getSongData(search_str)
     songObj = seamless.makeSongFromID(data)
 
+    print("DONE")
+
     util.year = songObj.year
 
     util.albumtracks.append(songObj)
     validTracks(songObj, songObj)
+
 
     util.alreadyChosenFM.append(songObj)
 

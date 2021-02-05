@@ -16,16 +16,17 @@ import Overlay from 'react-bootstrap/Overlay';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
-dotenv.config({path:"../.env"});
-const client_id='97b5a09a556b49bdb52b5db0c4dec41b';
-const client_secret='4d6cf42dbc6049328cc0779a97d5c976';
+
+
+dotenv.config({path:".env"});
+
+const client_id=process.env.REACT_APP_client_id;
+const client_secret=process.env.REACT_APP_client_secret;
 let access_token;
 
-const alanKey = '08dd587b9900d0225d9ec940df3f5af82e956eca572e1d8b807a3e2338fdd0dc/stage';
+const alanKey = process.env.REACT_APP_alanKey;
 
 var alan;
-
-
 
 const App = () => {
 
@@ -37,8 +38,19 @@ const App = () => {
   const [found, setFound] = useState(false);
   const ref = useRef(null);
 
-  //Trying to set up autocomplete....will finish tomorrow
   $(function() {
+
+    window.$("#js-rotating").Morphext({
+      // The [in] animation type. Refer to Animate.css for a list of available animations.
+      animation: "animate__animated animate__fadeInUp",
+      // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
+      separator: ",",
+      // The delay between the changing of each phrase in milliseconds.
+      speed: 2500,
+      complete: function () {
+          // Called after the entrance animation is executed.
+      }
+  });
 
     axios('https://accounts.spotify.com/api/token', {
       headers: {
@@ -67,7 +79,7 @@ const App = () => {
               response($.map(trackResponse.data.tracks.items.slice(0, 5), function(item) {
                 return {
                     label: item.name + " by " + item.artists[0].name,
-                    value: item.name + " " + item.artists[0].name,
+                    value: item.name + " " + item.artists[0].name, //change to id
                     id: item.id
                 }
 
@@ -78,7 +90,7 @@ const App = () => {
   
 
   },
-  minLength: 3,
+  minLength: 1,
   select: function(event, ui) {
       window.$("#autocomplete").val(ui.item.value);
       window.location.href = "#" + ui.item.value;
@@ -94,7 +106,7 @@ const App = () => {
   const inputTextHandler = (e) =>{
     setInputText(e.target.value);
     setFound(false);
-    console.log(e.target.value);
+    //console.log(e.target.value);
   };
 
     //Final Typed Query from user
@@ -104,6 +116,8 @@ const App = () => {
     }
     else {
 
+      console.log('QUERY', inputText);
+
       let query = inputText.toLowerCase().split(" ").join('+');
 
       axios(`https://api.spotify.com/v1/search?q=${query}&type=track&market=US`, {
@@ -112,7 +126,7 @@ const App = () => {
         
       })
       .then(trackResponse => {
-        if (trackResponse.data.tracks.items.length > 1) {
+        if (trackResponse.data.tracks.items.length >= 1) {
           e.preventDefault();
           console.log(inputText);
           loadingAnimation();
@@ -201,7 +215,7 @@ const App = () => {
         },
         rootEl: document.getElementById("alan-btn")
     })
-}, [])
+}, )
 
 function playSong(song_info) {
   console.log(song_info);
@@ -322,6 +336,9 @@ function postPlaylist(ans) {
         <div>
           <Image className="music" src={musicGif} roundedCircle={true} hidden={!loading}></Image>
         </div>
+        <span hidden={!loading} id="js-rotating">Studying similar artists..., You have an awesome taste in music!,
+         Finding great songs..., Putting you on to new sounds..., Thanks for using Seamless :), Elvis?? That's not right...,
+         Back on track!...sorta?, Brining you quality music...</span>
         <div className="spinner" hidden={!loading}>
           <div className="rect1"></div>
           <div className="rect2"></div>

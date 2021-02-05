@@ -255,7 +255,6 @@ body .ui-autocomplete{
 
 }
 
-
 .ui-menu-item-wrapper.ui-state-active {
   background: transparent !important;
   text-align: center;
@@ -265,5 +264,7 @@ body .ui-autocomplete{
   border-color: #1DB954;
 } 
 
-
-
+#js-rotating {
+  color: white;
+  font-family: 'Lora', serif;
+}
