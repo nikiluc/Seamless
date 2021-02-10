@@ -25,7 +25,9 @@ class Song():
             print(attr + ": " + str(item))
 
      def __eq__(self, other): 
-        if self.id == other.id or self.title == other.title and self.artist == other.artist:
+        if self.id == other.id:
+            return True
+        if self.title == other.title and self.artist == other.artist:
             return True
         else:
             return False

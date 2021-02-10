@@ -31,6 +31,7 @@ var alan;
 const App = () => {
 
   const [inputText, setInputText] = useState("");
+  const [song, setSong] = useState("");
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
@@ -41,14 +42,10 @@ const App = () => {
   $(function() {
 
     window.$("#js-rotating").Morphext({
-      // The [in] animation type. Refer to Animate.css for a list of available animations.
       animation: "animate__animated animate__fadeInUp",
-      // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
       separator: ",",
-      // The delay between the changing of each phrase in milliseconds.
       speed: 2500,
       complete: function () {
-          // Called after the entrance animation is executed.
       }
   });
 
@@ -94,8 +91,9 @@ const App = () => {
   select: function(event, ui) {
       window.$("#autocomplete").val(ui.item.value);
       window.location.href = "#" + ui.item.value;
-      console.log(ui.item.value);
+      console.log(ui.item.id);
       setInputText(ui.item.value);
+      setSong(ui.item.id);
       
   },
 });
@@ -130,7 +128,7 @@ const App = () => {
           e.preventDefault();
           console.log(inputText);
           loadingAnimation();
-          makePlaylist(inputText);
+          makePlaylist(song);
           setLoading(false);
         }
         else {
@@ -177,7 +175,7 @@ const App = () => {
       var li = $('<ListGroupItem as="li" bsClass="customList"/>')
           .addClass("animate__animated animate__fadeInUp")
           .appendTo(songList);
-       $('<a href=' + element['externalURL'] + ' target="_blank" rel="noopener noreferrer"' +'/>')
+       $(`<a href= ${element['externalURL']} target="_blank" rel="noopener noreferrer"' +'/>`)
           .addClass('list-group-item')
           .text(element['title'] + ' by ' + element['artist'])
           .appendTo(li);
@@ -215,7 +213,7 @@ const App = () => {
         },
         rootEl: document.getElementById("alan-btn")
     })
-}, )
+}, [])
 
 function playSong(song_info) {
   console.log(song_info);
@@ -285,10 +283,10 @@ function postPlaylist(ans) {
 
 
   return (
-      <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+      <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
         <div className="main-div">
           <div className="animate__animated animate__fadeIn">
-            <h1 className="title" id="titleLink" >Seamless</h1>
+            <h1 className="title" id="titleLink">Seamless</h1>
           </div>
         <div className="animate__animated animate__fadeInDown">
         <div ref={ref}>
@@ -338,7 +336,7 @@ function postPlaylist(ans) {
         </div>
         <span hidden={!loading} id="js-rotating">Studying similar artists..., You have an awesome taste in music!,
          Finding great songs..., Putting you on to new sounds..., Thanks for using Seamless :), Elvis?? That's not right...,
-         Back on track!...sorta?, Brining you quality music...</span>
+         Back on track!...sorta?, Brining you quality music...,</span>
         <div className="spinner" hidden={!loading}>
           <div className="rect1"></div>
           <div className="rect2"></div>

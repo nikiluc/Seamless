@@ -27,12 +27,17 @@ def makeSongFromID(songID):
     name = trackdata['name']
     albumName = trackdata['album']['name']
     year = trackdata['album']['release_date'][:4]
-    artist = trackdata['album']['artists'][0]['name']
-    a_id = trackdata['album']['artists'][0]['id']
+    artist = trackdata['artists'][0]['name']
+    a_id = trackdata['artists'][0]['id']
     popularity = trackdata['popularity']
     availableMarkets = trackdata['album']['available_markets']
     externalURL = trackdata['external_urls']['spotify']
     imgURL = trackdata['album']['images'][2]['url']
+
+    if len(trackdata['artists']) > 1 and util.secondArtistFlag == False:
+        util.secondArtist.update({trackdata['artists'][1]['name']: trackdata['artists'][1]['id']})
+    
+    util.secondArtistFlag = True
 
     songData.append(songID)
     songData.append(name)
@@ -49,7 +54,7 @@ def makeSongFromID(songID):
 
     return songObj
 
-# Retrieves song ID from search string
+# Retrieves song ID from search string // should be ph
 def getSongData(search_str):
 
     result = sp.search(search_str, limit=3)
@@ -113,11 +118,10 @@ def tempoCheck(songID, tempoRange):
         tempo = features[0]['tempo']
 
         if int(tempo) not in tempoRange:
-            print("Not in range...")
+            #print("Not in range...")
             return False
         else:
             print("In range...")
-            print(tempoRange)
             return True
 
 
@@ -125,22 +129,49 @@ def tempoCheck(songID, tempoRange):
 # Returns dictionary of artist IDs and names
 def relatedArtists(genSong):
 
-    util.artistDict = {}
+    #util.artistDict = {}
+
+    #Temporary
+    test = 6
 
     jsonData = sp.artist_related_artists(genSong.a_id)
 
-    util.artistDict.update({genSong.artist: genSong.a_id})
+    if len(util.secondArtist.keys()) > 0:
+
+        secondArtist = next(iter(util.secondArtist))
+
+        if test - len(util.artistDict.keys()) >= 1:
+            util.artistDict.update({secondArtist: util.secondArtist[secondArtist]})
+        
+    print(util.artistDict)
+
+    mainArtist = sp.artist(genSong.a_id)
+
+    mainGenres = mainArtist['genres']
+    print(mainGenres)
+
 
     numArtists = len(jsonData['artists'])
 
-    #Temporary
-    test = 7
 
-    for i in range(test):
-        key = jsonData['artists'][i]['name']
-        print(key)
-        value = jsonData['artists'][i]['id']
-        util.artistDict.update({key: value})
+    for i in range(numArtists):
+        if len(util.artistDict.keys()) >= test:
+            break
+        if any(genre in jsonData['artists'][i]['genres'] for genre in mainGenres):
+            key = jsonData['artists'][i]['name']
+            value = jsonData['artists'][i]['id']
+            util.artistDict.update({key: value})
+            print(jsonData['artists'][i]['genres'])
+
+    if len(util.artistDict.keys()) < test:
+        for i in range(test - len(util.artistDict.keys())):
+            key = jsonData['artists'][i]['name']
+            value = jsonData['artists'][i]['id']
+            util.artistDict.update({key: value})
+            print(jsonData['artists'][i]['genres'])
+
+    print(util.artistDict.keys())
+    print("ALREADY ", util.checkedArtists.keys())
 
     return util.artistDict
 
@@ -148,29 +179,34 @@ def relatedArtists(genSong):
 def artistAlbums(dictionary, genSong):
 
     songYear = int(util.year)
-    songYRange1 = songYear - 2
-    songYRange2 = songYear + 3
-
     albums = []
 
     for artistID in dictionary.values():
+        
+        albumResults = sp.artist_albums(artistID, album_type='album', country='US')
+        albums.extend(albumResults['items'])
+        while albumResults['next']:
+            albumResults = sp.next(albumResults)
+            albums.extend(albumResults['items'])
 
-       results = sp.artist_albums(artistID, album_type='album')
-       albums.extend(results['items'])
-       while results['next']:
-        results = sp.next(results)
-        albums.extend(results['items'])
+
+        
+        singleResults = sp.artist_albums(artistID, album_type='single', country='US')
+        albums.extend(singleResults['items'])
+        while singleResults['next']:
+            singleResults = sp.next(singleResults)
+            albums.extend(singleResults['items'])
+
 
     albumList = {}
+    yearRange = util.calcYearRange(songYear)
 
     for album in albums:
         if album['name'] not in albumList:
-            if int(album['release_date'][:4]) in range(songYRange1, songYRange2):
+            if int(album['release_date'][:4]) in yearRange:
                 if album['id'] not in util.checkedAlbums:
                     albumList.update({album['name']: album['id']})
     
-
-    print(util.year)
     print("ALBUM NAMES: ")
     print(albumList.keys())
     print("CHECKED ALBUMS: ")
@@ -198,7 +234,7 @@ def getTracks(albumList, genSong, limit):
     # Shuffles the list of albums 
     albums = list(albumList.values())
     random.seed(datetime.now())
-    random.shuffle(albums)
+    #random.shuffle(albums)
 
     # Search for songs in each album that satisfy requirements
     for value in albums:
@@ -206,80 +242,102 @@ def getTracks(albumList, genSong, limit):
         result = sp.album_tracks(value)
         random.shuffle(result['items'])
 
-        for i in range(len(result['items'])):
+        if result['items'][0]['artists'][0]['id'] not in util.checkedArtists.values():
 
-            songID = result['items'][i]['id']
+            for i in range(len(result['items'])):
 
-            if (tempoCheck(songID, tempoRange) == True):
+                songID = result['items'][i]['id']
 
-                try:
-                    songObj = makeSongFromID(songID)
+                if (tempoCheck(songID, tempoRange) == True): #To implement: return tuple with second value being half of song Obj
 
-                except requests.exceptions.Timeout:
+                    try:
+                        songObj = makeSongFromID(songID)
 
-                    songObj = makeSongFromID(songID)
+                    except requests.exceptions.Timeout:
 
-                tempo = int(songObj.tempo)
-                loudness = float(songObj.loudness)
-                popularity = float(songObj.popularity)
-                danceability = float(songObj.danceability)
-                energy = float(songObj.energy)
-                valence = float(songObj.valence)
-                speech = float(songObj.speechiness)
-                #mode = songObj.mode # Unused 
+                        songObj = makeSongFromID(songID)
 
-                if (popularity in popRange
-                    and danceability in danceRange and energy in energyRange):
+                    tempo = int(songObj.tempo)
+                    loudness = float(songObj.loudness)
+                    popularity = float(songObj.popularity)
+                    danceability = float(songObj.danceability)
+                    energy = float(songObj.energy)
+                    valence = float(songObj.valence)
+                    speech = float(songObj.speechiness)
+                    #mode = songObj.mode # Unused 
 
-                    if songObj in util.albumtracks:
-                        print("Already in list, not adding...")
-                    else:
-                        # measure to prevent artists from appearing in the playlist too many times
-                        count = 0
-                        for track in util.albumtracks:
-                            if track.title == songObj.title:
-                                count += 3
-                            if track.album == songObj.album:
-                                count += 1
-                            if track.artist == songObj.artist:
-                                count += 1
-                        
-                        if count > 2:
-                            print("Artist/Song in list thrice, not adding...")
-                        else:
-                            if len(util.albumtracks) == limit:
-                                break
-                            # only working with songs available in the US (for now)
-                            if 'US' in songObj.availableMarkets:
-                                songObj.printInfo()
-                                util.albumtracks.append(songObj)
-                            else:
-                                continue
-            
-                else:
+                    if (popularity in popRange
+                        and danceability in danceRange and energy in energyRange and valence in valenceRange):
 
-                    if (energy in energyRange):
                         if songObj in util.albumtracks:
-                            print(songObj.title)
                             print("Already in list, not adding...")
                         else:
-                            util.tempotracks.append(songObj)
-                            print("ADDED TO TEMPO TRACKS")
+                            # measure to prevent artists from appearing in the playlist too many times
+                            count = 0
+                            for track in util.albumtracks:
+                                if track.album == songObj.album and track.artist == songObj.artist:
+                                    count += 2
+                                elif track.artist == songObj.artist:
+                                    count += 2
+                            
+                            if count > 3:
+                                print("Artist/Song in list thrice, not adding...")
+                                util.checkedArtists.update({songObj.artist: songObj.a_id})
+                            else:
+                                if len(util.albumtracks) == util.limit:
+                                    break
+                                # only working with songs available in the US (for now)
+                                if 'US' in songObj.availableMarkets:
+                                    songObj.printInfo()
+                                    util.albumtracks.append(songObj)
+                                else:
+                                    continue
+                
                     else:
-                        print("NOPE")
-            else:
 
-                continue
+                        if (energy in energyRange and danceability in danceRange and valence in valenceRange):
+                            if songObj in util.albumtracks:
+                                print("Already in list, not adding...")
+                            else:
+                                util.tempotracks.append(songObj)
+                                print("ADDED TO TEMPO TRACKS")
 
 
-        # maximum amount of songs in a playlist                       
-        if len(util.albumtracks) == limit:
-            break
+                                if len(util.tempotracks) >= 15 and len(util.albumtracks) >= 2:
+                                    print("HEY")
+                                    random.shuffle(util.tempotracks)
+                                    for track in util.tempotracks:
+                                        count = 0 
+                                        if len(util.albumtracks) < util.limit:
+                                            for song in util.albumtracks:
+                                                if track.artist == song.artist:
+                                                    count += 1
+                                                    if track.album == song.album:
+                                                        count += 1
+                                        
+                                            if track not in util.albumtracks and count < 4 and track.a_id not in util.checkedArtists.values():
+                                                if 'US' in track.availableMarkets:
+                                                    util.albumtracks.append(track)
+                                            else:
+                                                util.checkedArtists.update({track.artist: track.a_id})
 
-        util.checkedAlbums.append(value)
+                else:
+
+                    continue
+                      
+                if len(util.albumtracks) == util.limit:
+                    break
+
+            # maximum amount of songs in a playlist                       
+            if len(util.albumtracks) == util.limit:
+                break
+            util.checkedAlbums.append(value)
         
-    for track in util.albumtracks:
-        print(track.title)
+        else:
+            
+            util.checkedAlbums.append(value)
+
+        
        
 # Generates a playlist from the list of song objects 
 def genPlaylist(tracks, title, sp, user_id):
@@ -293,34 +351,26 @@ def genPlaylist(tracks, title, sp, user_id):
     playlistTitle = "Seamless: " + title
 
     # Playlist creation on user's spotify account
-    sp.user_playlist_create(user_id, playlistTitle)
-    playlists = sp.user_playlists(user_id)
+    playlistInfo = sp.user_playlist_create(user_id, playlistTitle)
 
-    playlistID = ''
-
-    for playlist in playlists['items']:
-        if playlist['name'] == playlistTitle:
-            playlistID = playlist['id']
-    
     # Adding tracks to newly created playlist
-    sp.user_playlist_add_tracks(user_id, playlistID, tracklist)
+    sp.user_playlist_add_tracks(user_id, playlistInfo['id'], tracklist)
 
 
 def main(spUser, user_id):
 
     random.seed(datetime.now())
 
-    limit = 10
     songData = util.albumtracks[0]
     artistsDict = relatedArtists(songData)
     validAlbums = artistAlbums(artistsDict, songData)
-    getTracks(validAlbums, songData, limit)
+    getTracks(validAlbums, songData, util.limit)
     originSong = util.albumtracks[0]
 
     originSong.printInfo()
 
     # Takes other songs on the list, and finds songs related to them
-    while len(util.albumtracks) < limit:
+    while len(util.albumtracks) < util.limit:
 
         songData = originSong
 
@@ -336,7 +386,7 @@ def main(spUser, user_id):
 
         artistsDict = relatedArtists(songData)
         validAlbums = artistAlbums(artistsDict, originSong)
-        getTracks(validAlbums, originSong, limit)
+        getTracks(validAlbums, originSong, util.limit)
         util.alreadyChosenSP.append(songData)
 
         # All the songs on the list have been chosen already 
@@ -345,15 +395,18 @@ def main(spUser, user_id):
 
             random.shuffle(util.tempotracks)
 
-            for track in util.tempotracks: 
-                if len(util.albumtracks) < limit:
-                    if track not in util.albumtracks:
-                        util.albumtracks.append(track)
+            for track in util.tempotracks:
+                count = 0 
+                if len(util.albumtracks) < util.limit:
+                    for song in util.albumtracks:
+                        if track.artist == song.artist:
+                            count += 1
+                
+                    if track not in util.albumtracks and count < 3:
+                        if 'US' in track.availableMarkets:
+                            util.albumtracks.append(track)
                 else:
                     break
-
-            for track in util.albumtracks:
-                print(track.id)
             #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
             break
         
