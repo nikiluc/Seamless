@@ -9,15 +9,21 @@ def init():
     global alreadyChosenSP
     global checkedAlbums
     global artistDict
+    global checkedArtists
     global limit
     global year
+    global secondArtist
+    global secondArtistFlag
 
     albumtracks = []
     tempotracks = []
     alreadyChosenFM = []
     alreadyChosenSP = []
     checkedAlbums = []
+    secondArtist = {}
+    secondArtistFlag = False
     artistDict = {}
+    checkedArtists = {}
     limit = 10
     year = 0
 
@@ -32,7 +38,7 @@ def calcLoudnessRange(value):
 
 def calcPopularityRange(value):
 
-    popRange = list(np.arange(float(value) - 20, float(value) + 35, 1))
+    popRange = list(np.arange(float(value) - 25, float(value) + 35, 1))
 
     roundedPopularity = [round(x, 3) for x in popRange]
 
@@ -40,7 +46,7 @@ def calcPopularityRange(value):
 
 def calcEnergyRange(value):
 
-    energyRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    energyRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedEnergy = [round(x, 3) for x in energyRange]
 
@@ -48,7 +54,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
+    danceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -56,7 +62,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 4
+    rangeVal = 7
 
     halfBPM = int(value/2)
 
@@ -74,7 +80,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .2, float(value) + .35, .001))
+    valenceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
@@ -91,8 +97,15 @@ def calcSpeechRange(value):
 def calcYearRange(value):
 
     songYear = int(value)
-    songYRange1 = songYear - 2
-    songYRange2 = songYear + 3
+
+    if songYear in [2019, 2020, 2021]:
+        songYRange1 = songYear - 3
+        songYRange2 = songYear + 2
+    
+    else:
+
+        songYRange1 = songYear - 2
+        songYRange2 = songYear + 3
 
     return list(range(songYRange1, songYRange2))
 
