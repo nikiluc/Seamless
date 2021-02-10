@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -10,85 +10,142 @@ import $ from 'jquery';
 import { Container, ListGroup } from 'react-bootstrap';
 import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
-import Alert from 'react-bootstrap/Alert';
-import Modal from 'react-bootstrap/Modal'
+import Modal from 'react-bootstrap/Modal';
+import Popover from 'react-bootstrap/Popover';
+import Overlay from 'react-bootstrap/Overlay';
+import dotenv from 'dotenv';
+import axios from 'axios';
 
 
-const alanKey = '08dd587b9900d0225d9ec940df3f5af82e956eca572e1d8b807a3e2338fdd0dc/stage';
+
+dotenv.config({path:".env"});
+
+const client_id=process.env.REACT_APP_client_id;
+const client_secret=process.env.REACT_APP_client_secret;
+let access_token;
+
+const alanKey = process.env.REACT_APP_alanKey;
 
 var alan;
 
 const App = () => {
 
-  const [submit, setSubmit] = useState("");
   const [inputText, setInputText] = useState("");
+  const [song, setSong] = useState("");
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
   const [alert, showAlert] = useState(false);
+  const [found, setFound] = useState(false);
+  const ref = useRef(null);
 
-  //Trying to set up autocomplete....will finish tomorrow
   $(function() {
+
+    window.$("#js-rotating").Morphext({
+      animation: "animate__animated animate__fadeInUp",
+      separator: ",",
+      speed: 2500,
+      complete: function () {
+      }
+  });
+
+    axios('https://accounts.spotify.com/api/token', {
+      headers: {
+         'Content-Type' : 'application/x-www-form-urlencoded',
+         'Authorization' : 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')     
+       },
+      data: 'grant_type=client_credentials',
+      method: 'POST'
+     })
+     .then(tokenResponse => {      
+        access_token = tokenResponse.data.access_token;
+      });
 
     window.$('#autocomplete').autocomplete({
       source: function(request, response) {
-      window.$.ajax({
-          type: "GET",
-          url: "https://api.spotify.com/v1/search",
-          dataType: "json",
-          data: {
-              type: "artist",
-              limit: 3,
-              contentType: "application/json; charset=utf-8",
-              format: "json",
-              q: request.term
-          },
-          success: function(data) {
-              response($.map(data.artists.items, function(item) {
-                  return {
-                      label: item.name,
-                      value: item.name,
-                      id: item.id
-                  }
-              }));
-          }
+
+      let query = request.term.toLowerCase().split(" ").join('+');
+
+          axios(`https://api.spotify.com/v1/search?q=${query}&type=track&market=US`, {
+            method: 'GET',
+            headers: { 'Authorization' : 'Bearer ' + access_token},
+            
+          })
+          .then(trackResponse => {
+              //const song_info = trackResponse.data.tracks.items[0]
+              response($.map(trackResponse.data.tracks.items.slice(0, 5), function(item) {
+                return {
+                    label: item.name + " by " + item.artists[0].name,
+                    value: item.name + " " + item.artists[0].name, //change to id
+                    id: item.id
+                }
+
+            }))
+        }).catch(error => {
+            console.log(error.response)
       });
+  
+
   },
-  minLength: 3,
+  minLength: 1,
   select: function(event, ui) {
-      $("#autocomplete").val(ui.item.value);
+      window.$("#autocomplete").val(ui.item.value);
       window.location.href = "#" + ui.item.value;
+      console.log(ui.item.id);
+      setInputText(ui.item.value);
+      setSong(ui.item.id);
+      
   },
 });
 
 });
-
 
       //Sets input Text
   const inputTextHandler = (e) =>{
     setInputText(e.target.value);
+    setFound(false);
+    //console.log(e.target.value);
   };
 
     //Final Typed Query from user
   const submitHandler = (e) =>{
     if (e.target.checkValidity() === false) {
 
-      e.preventDefault();
-
     }
     else {
-      e.preventDefault();
-      setSubmit(inputText);
-      console.log(inputText);
-      loadingAnimation();
-      makePlaylist(inputText);
-      setLoading(false);
 
+      console.log('QUERY', inputText);
 
+      let query = inputText.toLowerCase().split(" ").join('+');
+
+      axios(`https://api.spotify.com/v1/search?q=${query}&type=track&market=US`, {
+        method: 'GET',
+        headers: { 'Authorization' : 'Bearer ' + access_token},
+        
+      })
+      .then(trackResponse => {
+        if (trackResponse.data.tracks.items.length >= 1) {
+          e.preventDefault();
+          console.log(inputText);
+          loadingAnimation();
+          makePlaylist(song);
+          setLoading(false);
+        }
+        else {
+
+          e.preventDefault();
+          setFound(true);
+          setValidated(false);
+
+        }
+
+    }).catch(error => {
+        console.log(error.response)
+  });
+ 
     }
-
+    e.preventDefault();
     setValidated(true);
-
   };
 
   function loadingAnimation() {
@@ -118,7 +175,7 @@ const App = () => {
       var li = $('<ListGroupItem as="li" bsClass="customList"/>')
           .addClass("animate__animated animate__fadeInUp")
           .appendTo(songList);
-      var aaa = $('<a href=' + element['externalURL'] + ' target="_blank" rel="noopener noreferrer"' +'/>')
+       $(`<a href= ${element['externalURL']} target="_blank" rel="noopener noreferrer"' +'/>`)
           .addClass('list-group-item')
           .text(element['title'] + ' by ' + element['artist'])
           .appendTo(li);
@@ -224,14 +281,16 @@ function postPlaylist(ans) {
 
 }
 
+
   return (
-      <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+      <div style={{height: '100%', backgroundImage:`linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
         <div className="main-div">
           <div className="animate__animated animate__fadeIn">
-            <h1 className="title" id="titleLink" >Seamless</h1>
+            <h1 className="title" id="titleLink">Seamless</h1>
           </div>
         <div className="animate__animated animate__fadeInDown">
-          <Form id="searchForm" noValidate validated={validated} onSubmit={submitHandler}>
+        <div ref={ref}>
+          <Form id="searchForm" ref={ref} noValidate validated={validated} onSubmit={submitHandler}>
             <Form.Group className="searchbar">
               <Form.Control className="form-rounded" id="autocomplete" value={inputText} size="lg" type="text" placeholder="Enter an artist and song :)" onChange={inputTextHandler} required={true}/>
               <Form.Control.Feedback type="invalid">
@@ -239,9 +298,17 @@ function postPlaylist(ans) {
               </Form.Control.Feedback>
             </Form.Group>
           </Form>
+          </div>
         </div>
         <div className="animate__animated animate__fadeInUp">
           <Button form="searchForm" className="submitBtn" size="lg" variant="success" type="submit">Submit</Button>{''}
+          <Overlay show={found} target={ref.current} placement="right">
+              <Popover id="popover-basic">
+              <Popover.Content>
+                <strong>Uh oh</strong> we couldn't find your song. Please try a different song!
+              </Popover.Content>
+            </Popover>
+          </Overlay>
         </div>
         <div className="addToSpotify">
           <Container>
@@ -267,6 +334,9 @@ function postPlaylist(ans) {
         <div>
           <Image className="music" src={musicGif} roundedCircle={true} hidden={!loading}></Image>
         </div>
+        <span hidden={!loading} id="js-rotating">Studying similar artists..., You have an awesome taste in music!,
+         Finding great songs..., Putting you on to new sounds..., Thanks for using Seamless :), Elvis?? That's not right...,
+         Back on track!...sorta?, Brining you quality music...,</span>
         <div className="spinner" hidden={!loading}>
           <div className="rect1"></div>
           <div className="rect2"></div>
