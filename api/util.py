@@ -36,9 +36,24 @@ def calcLoudnessRange(value):
 
     return roundedLoud
 
+def calcAcousticnessRange(value):
+
+    acousticRange = list(np.arange(float(value) - .25, float(value) + .3, .001))
+
+    roundedAcoustic = [round(x, 3) for x in acousticRange]
+
+    return roundedAcoustic
+
+
 def calcPopularityRange(value):
 
-    popRange = list(np.arange(float(value) - 25, float(value) + 35, 1))
+    if value >= 75:
+
+        popRange = list(np.arange(float(value) - 40, float(value) + 35, 1))
+    
+    else:
+
+        popRange = list(np.arange(float(value) - 25, float(value) + 35, 1))
 
     roundedPopularity = [round(x, 3) for x in popRange]
 
@@ -54,7 +69,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    danceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -62,7 +77,7 @@ def calcDanceabilityRange(value):
 
 def calcTempoRange(value):
 
-    rangeVal = 7
+    rangeVal = 6
 
     halfBPM = int(value/2)
 
@@ -75,6 +90,7 @@ def calcTempoRange(value):
     tempoRangeDouble = [*range(doubleBPM - rangeVal, doubleBPM + rangeVal, 1)]
 
     tempoRange = tempoRangeFull + tempoRangeHalf + tempoRangeDouble
+
 
     return tempoRange
 
@@ -99,7 +115,7 @@ def calcYearRange(value):
     songYear = int(value)
 
     if songYear in [2019, 2020, 2021]:
-        songYRange1 = songYear - 3
+        songYRange1 = songYear - 2
         songYRange2 = songYear + 2
     
     else:

@@ -1,6 +1,6 @@
 class Song():
 
-     def __init__(self, id, title, artist, a_id, year, album, popularity, availableMarkets, externalURL, imgURL, tempo, loudness, danceability, energy, valence, speechiness, mode):
+     def __init__(self, id, title, artist, a_id, year, album, popularity, availableMarkets, externalURL, imgURL, tempo, loudness, danceability, energy, valence, acousticness, speechiness, mode):
          self.title = title
          self.id = id
          self.artist = artist
@@ -16,6 +16,7 @@ class Song():
          self.danceability = danceability
          self.energy = energy
          self.valence = valence
+         self.acousticness = acousticness
          self.speechiness = speechiness
          self.mode = mode
 

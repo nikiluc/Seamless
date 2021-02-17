@@ -12,10 +12,14 @@ import numpy as np
 import requests
 import util
 import operator
+import logging
 
 
 # set as environment variables
 sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+
+logger = logging.getLogger('examples.artist_recommendations')
+logging.basicConfig(level='INFO')
 
 # Creates a song object from Spotify song ID
 def makeSongFromID(songID):
@@ -82,6 +86,7 @@ def getSongInfo(songStats):
         danceability = 0
         energy = 0
         valence = 0
+        acousticness = 0
         speechiness = 0
         mode = 0
     
@@ -91,11 +96,12 @@ def getSongInfo(songStats):
         danceability = features[0]['danceability']
         energy = features[0]['energy']
         valence = features[0]['valence']
+        acousticness = features[0]['acousticness']
         speechiness = features[0]['speechiness']
         mode = features[0]['mode']
 
     # Final song object
-    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], songStats[7], songStats[8], songStats[9], tempo, loudness, danceability, energy, valence, speechiness, mode)
+    genSong = Song(songStats[0], songStats[1], songStats[2], songStats[3], songStats[4], songStats[5], songStats[6], songStats[7], songStats[8], songStats[9], tempo, loudness, danceability, energy, valence, acousticness, speechiness, mode)
 
     return genSong
 
@@ -150,7 +156,6 @@ def relatedArtists(genSong):
     mainGenres = mainArtist['genres']
     print(mainGenres)
 
-
     numArtists = len(jsonData['artists'])
 
 
@@ -173,12 +178,67 @@ def relatedArtists(genSong):
     print(util.artistDict.keys())
     print("ALREADY ", util.checkedArtists.keys())
 
+
     return util.artistDict
+
+
+
+def recommendedTracks(genSong):
+
+    tempoRange = util.calcTempoRange(int(genSong.tempo))
+    print(tempoRange)
+    #loudRange = util.calcLoudnessRange(genSong.loudness)
+    popRange = util.calcPopularityRange(genSong.popularity)
+    danceRange = util.calcDanceabilityRange(genSong.danceability)
+    energyRange = util.calcEnergyRange(genSong.energy)
+    valenceRange = util.calcValenceRange(genSong.valence)
+    acousticRange = util.calcAcousticnessRange(genSong.acousticness)
+    #speechRange = util.calcSpeechRange(genSong.speechiness)
+
+
+    yearRange = util.calcYearRange(genSong.year)
+    recList = list(util.artistDict.values())
+    recList = [recList[0]]
+    idList = []
+
+    for song in util.albumtracks:
+        idList.append(song.id)
+    
+    if len(idList) > 3:
+        idList = [idList[3]]
+    
+    tempList = []
+
+    results = sp.recommendations(seed_tracks=idList, country='US',
+     limit=30, min_tempo=tempoRange[0], max_tempo=genSong.tempo + 3, target_tempo=genSong.tempo,
+     min_popularity = int(popRange[0]), max_popularity=int(popRange[-1]),
+     min_energy=energyRange[0], max_energy=energyRange[-1], target_energy=genSong.energy,
+     min_valence=valenceRange[0], max_valence=valenceRange[-1], target_valence=genSong.valence,
+     min_danceability=danceRange[0], max_danceability=danceRange[-1], target_danceability=genSong.danceability,
+     min_acousticness=acousticRange[0], max_acousticness=acousticRange[-1], target_acousticness=genSong.acousticness)
+    for track in results['tracks']:
+        if int(track['album']['release_date'][:4]) in yearRange:
+            logger.info(' Recommendation: %s - %s', track['name'],
+                        track['artists'][0]['name'])
+            songObj = makeSongFromID(track['id'])
+            if songObj not in util.albumtracks and len(util.albumtracks) != util.limit:
+                tempList.append(songObj)
+    
+    random.shuffle(tempList)
+    for songObj in tempList:
+        if len(util.albumtracks) < util.limit:
+            util.albumtracks.append(songObj)
+        else:
+            break
+
+
+
 
 # Finds albums published within the correct time frame
 def artistAlbums(dictionary, genSong):
 
-    songYear = int(util.year)
+    albumList = {}
+    yearRange = util.calcYearRange(genSong.year)
     albums = []
 
     for artistID in dictionary.values():
@@ -198,9 +258,6 @@ def artistAlbums(dictionary, genSong):
             albums.extend(singleResults['items'])
 
 
-    albumList = {}
-    yearRange = util.calcYearRange(songYear)
-
     for album in albums:
         if album['name'] not in albumList:
             if int(album['release_date'][:4]) in yearRange:
@@ -217,10 +274,6 @@ def artistAlbums(dictionary, genSong):
 # Adds songs that satisfy the requirements to the final playlist
 def getTracks(albumList, genSong, limit):
 
-    # Add original song to list
-    #if genSong not in util.albumtracks:
-        #util.albumtracks.append(genSong)
-    
     # creates of range of values that songs must be in to be added to the playlist
     tempoRange = util.calcTempoRange(int(genSong.tempo))
     loudRange = util.calcLoudnessRange(genSong.loudness)
@@ -228,12 +281,13 @@ def getTracks(albumList, genSong, limit):
     danceRange = util.calcDanceabilityRange(genSong.danceability)
     energyRange = util.calcEnergyRange(genSong.energy)
     valenceRange = util.calcValenceRange(genSong.valence)
+    acousticRange = util.calcAcousticnessRange(genSong.acousticness)
     speechRange = util.calcSpeechRange(genSong.speechiness)
     #modeVal = genSong.mode # Unused 
 
     # Shuffles the list of albums 
     albums = list(albumList.values())
-    random.seed(datetime.now())
+    #random.seed(datetime.now())
     #random.shuffle(albums)
 
     # Search for songs in each album that satisfy requirements
@@ -264,10 +318,12 @@ def getTracks(albumList, genSong, limit):
                     energy = float(songObj.energy)
                     valence = float(songObj.valence)
                     speech = float(songObj.speechiness)
+                    acousticness = float(songObj.acousticness)
                     #mode = songObj.mode # Unused 
 
                     if (popularity in popRange
-                        and danceability in danceRange and energy in energyRange and valence in valenceRange):
+                        and danceability in danceRange and energy in energyRange and valence in valenceRange
+                        and acousticness in acousticRange):
 
                         if songObj in util.albumtracks:
                             print("Already in list, not adding...")
@@ -295,7 +351,8 @@ def getTracks(albumList, genSong, limit):
                 
                     else:
 
-                        if (energy in energyRange and danceability in danceRange and valence in valenceRange):
+                        if (energy in energyRange and danceability in danceRange and valence in valenceRange
+                        and acousticness in acousticRange):
                             if songObj in util.albumtracks:
                                 print("Already in list, not adding...")
                             else:
@@ -303,7 +360,7 @@ def getTracks(albumList, genSong, limit):
                                 print("ADDED TO TEMPO TRACKS")
 
 
-                                if len(util.tempotracks) >= 15 and len(util.albumtracks) >= 2:
+                                if len(util.tempotracks) >= 5 and len(util.albumtracks) >= 3:
                                     print("HEY")
                                     random.shuffle(util.tempotracks)
                                     for track in util.tempotracks:
@@ -324,6 +381,11 @@ def getTracks(albumList, genSong, limit):
                 else:
 
                     continue
+
+                
+                if len(util.albumtracks) >= 4:
+                    recommendedTracks(genSong)
+                    print(len(util.albumtracks))
                       
                 if len(util.albumtracks) == util.limit:
                     break
@@ -336,6 +398,9 @@ def getTracks(albumList, genSong, limit):
         else:
             
             util.checkedAlbums.append(value)
+
+    if len(util.albumtracks) < util.limit:
+        recommendedTracks(genSong)
 
         
        
