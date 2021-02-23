@@ -242,7 +242,8 @@ body .ui-autocomplete{
 
 .signOutBtn{
   position: absolute;
-  top: 5%;
+  top: 2.2%;
   right: 2%;
   border-radius: 2rem;
+  background-color: #1DB954;
 }
