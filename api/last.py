@@ -1,4 +1,5 @@
 import os
+import uuid
 import requests
 import json
 import pylast
@@ -65,7 +66,6 @@ def validTracks(genSong, songObj):
             if matchData > 0.6:
                 data2 = seamless.getSongData(songInfo)
                 songObj2 = seamless.makeSongFromID(data2)
-                #util.artistDict.update(({songObj2.artist: songObj2.a_id}))
                 songObj2.printInfo()
                 if songObj2 not in util.albumtracks:
                     valid.append(songObj2)
@@ -105,26 +105,22 @@ def validTracks(genSong, songObj):
 # Uses search string to find similar songs
 
 
-def launch(search_str):
+def launch(search_str, auth=None, user_id=None):
 
     load_dotenv()
 
-    # Authentication to create playlist
-    scope = 'playlist-modify-public'
-    spUser = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
-
-    user_id = spUser.me()['id']
-
+    #Authentication only occurs when user adds playlist
     if (search_str == "True"):
+        spUser = auth
+        user_id = spUser.me()['id']
         seamless.genPlaylist(
-            util.albumtracks, util.albumtracks[0].title, spUser, user_id)
+            util.albumtracks, util.albumtracks[0].title, util.albumtracks[0].artist, spUser, user_id)
         return True
 
     # initialization of global variables
     util.init()
 
     # creation of song object
-    #data = seamless.getSongData(search_str)
     songObj = seamless.makeSongFromID(search_str)
     util.year = songObj.year
     util.albumtracks.append(songObj)
@@ -145,7 +141,7 @@ def launch(search_str):
             
             songData = random.sample(util.albumtracks, 1)[0]
             if len(util.albumtracks) == len(util.alreadyChosenFM):
-                seamless.main(spUser, user_id)
+                seamless.main()
                 util.limit = len(util.albumtracks)
                 break
 
@@ -161,7 +157,4 @@ def launch(search_str):
 
 
 if __name__ == "__main__":
-
-    random.seed()
-
     launch(search_str="starving zedd")
