@@ -37,6 +37,9 @@ const App = () => {
   const ref = useRef(null);
 
   $(function () {
+
+    isSignedIn();
+
     window.$("#js-rotating").Morphext({
       animation: "animate__animated animate__fadeInUp",
       separator: ",",
@@ -91,7 +94,6 @@ const App = () => {
       select: function (event, ui) {
         window.$("#autocomplete").val(ui.item.value);
         window.location.href = "#" + ui.item.value;
-        console.log(ui.item.id);
         setInputText(ui.item.value);
         setSong(ui.item.id);
       },
@@ -109,7 +111,6 @@ const App = () => {
   const submitHandler = (e) => {
     if (e.target.checkValidity() === false) {
     } else {
-      console.log("QUERY", inputText);
 
       let query = inputText.toLowerCase().split(" ").join("+");
 
@@ -123,7 +124,6 @@ const App = () => {
         .then((trackResponse) => {
           if (trackResponse.data.tracks.items.length >= 1) {
             e.preventDefault();
-            console.log(inputText);
             loadingAnimation();
             makePlaylist(song);
             setLoading(false);
@@ -185,6 +185,42 @@ const App = () => {
     $(".title").addClass("animate__animated animate__fadeInDown");
   }
 
+  function loadSignOut() {
+
+    $(".signOutBtn")
+    .addClass("animate__animated animate__fadeInDown")
+    .attr("hidden", false);
+
+  }
+
+  function isSignedIn(){
+    fetch("/isSignedIn", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "Application/JSON",
+      },
+      body: JSON.stringify({}),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.text();
+      })
+      .then(function (response) {
+        console.log(response);
+        if (response === 'true'){
+          loadSignOut();
+        }
+
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  }
+
   function refreshPage() {
     window.location.reload();
   }
@@ -207,12 +243,10 @@ const App = () => {
   }, []);
 
   function playSong(song_info) {
-    console.log(song_info);
     window.open(song_info.external_urls.spotify);
   }
 
   function makePlaylist(search_str) {
-    console.log(search_str);
     fetch("/playlist", {
       method: "POST",
       mode: "cors",
@@ -242,19 +276,15 @@ const App = () => {
                 console.error(error);
                 return;
               }
-              console.log(result);
             }
           );
         }
         var songArray = JSON.parse(response);
-        console.log(songArray);
-
         loadResults(songArray);
       });
   }
 
   function postPlaylist(ans) {
-    console.log(ans);
     fetch("/postPlaylist", {
       method: "POST",
       mode: "cors",
@@ -275,8 +305,36 @@ const App = () => {
       .catch(function (error) {
         console.log(error);
       });
+    setTimeout(function () {
+      loadSignOut();
+    }, 3000);
     setPosted(true);
     alan.playText("Done.");
+  }
+
+  function signOut () {
+    fetch("/signOut", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "Application/JSON",
+      },
+      body: JSON.stringify({}),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.text();
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+      refreshPage();
   }
 
   return (
@@ -290,6 +348,18 @@ const App = () => {
       }}
     >
       <div className="main-div">
+      <Button
+            className="signOutBtn"
+            size="sm"
+            variant="success"
+            type="submit"
+            hidden={true}
+            onClick={() => {
+              signOut();
+            }}
+          >
+            Sign Out
+          </Button>{""}
         <div className="animate__animated animate__fadeIn">
           <h1 className="title" id="titleLink">
             Seamless
@@ -353,7 +423,6 @@ const App = () => {
                 type="button"
                 disabled={posted}
                 onClick={() => {
-                  setPosted(true);
                   postPlaylist("True");
                 }}
               >

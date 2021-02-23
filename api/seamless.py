@@ -123,8 +123,8 @@ def tempoCheck(songID, tempoRange):
     else:
         tempo = features[0]['tempo']
 
+
         if int(tempo) not in tempoRange:
-            #print("Not in range...")
             return False
         else:
             print("In range...")
@@ -135,49 +135,37 @@ def tempoCheck(songID, tempoRange):
 # Returns dictionary of artist IDs and names
 def relatedArtists(genSong):
 
-    #util.artistDict = {}
-
-    #Temporary
-    test = 6
-
+    artistLimit = 6
     jsonData = sp.artist_related_artists(genSong.a_id)
 
     if len(util.secondArtist.keys()) > 0:
 
         secondArtist = next(iter(util.secondArtist))
 
-        if test - len(util.artistDict.keys()) >= 1:
+        if artistLimit - len(util.artistDict.keys()) >= 1:
             util.artistDict.update({secondArtist: util.secondArtist[secondArtist]})
         
-    print(util.artistDict)
-
     mainArtist = sp.artist(genSong.a_id)
-
     mainGenres = mainArtist['genres']
-    print(mainGenres)
-
     numArtists = len(jsonData['artists'])
 
 
     for i in range(numArtists):
-        if len(util.artistDict.keys()) >= test:
+        if len(util.artistDict.keys()) >= artistLimit:
             break
         if any(genre in jsonData['artists'][i]['genres'] for genre in mainGenres):
             key = jsonData['artists'][i]['name']
             value = jsonData['artists'][i]['id']
             util.artistDict.update({key: value})
-            print(jsonData['artists'][i]['genres'])
 
-    if len(util.artistDict.keys()) < test:
-        for i in range(test - len(util.artistDict.keys())):
+    if len(util.artistDict.keys()) < artistLimit:
+        for i in range(artistLimit - len(util.artistDict.keys())):
             key = jsonData['artists'][i]['name']
             value = jsonData['artists'][i]['id']
             util.artistDict.update({key: value})
-            print(jsonData['artists'][i]['genres'])
 
     print(util.artistDict.keys())
     print("ALREADY ", util.checkedArtists.keys())
-
 
     return util.artistDict
 
@@ -186,7 +174,7 @@ def relatedArtists(genSong):
 def recommendedTracks(genSong):
 
     tempoRange = util.calcTempoRange(int(genSong.tempo))
-    print(tempoRange)
+
     #loudRange = util.calcLoudnessRange(genSong.loudness)
     popRange = util.calcPopularityRange(genSong.popularity)
     danceRange = util.calcDanceabilityRange(genSong.danceability)
@@ -205,7 +193,7 @@ def recommendedTracks(genSong):
         idList.append(song.id)
     
     if len(idList) > 3:
-        idList = [idList[3]]
+        idList = idList[0:4]
     
     tempList = []
 
@@ -230,8 +218,6 @@ def recommendedTracks(genSong):
             util.albumtracks.append(songObj)
         else:
             break
-
-
 
 
 # Finds albums published within the correct time frame
@@ -405,7 +391,7 @@ def getTracks(albumList, genSong, limit):
         
        
 # Generates a playlist from the list of song objects 
-def genPlaylist(tracks, title, sp, user_id):
+def genPlaylist(tracks, title, artist, sp, user_id):
 
     tracklist = []
 
@@ -413,7 +399,7 @@ def genPlaylist(tracks, title, sp, user_id):
         tracklist.append(track.id)
         print(track.title + " " + str(track.tempo))
     
-    playlistTitle = "Seamless: " + title
+    playlistTitle = "Seamless: " + artist + " - " + title
 
     # Playlist creation on user's spotify account
     playlistInfo = sp.user_playlist_create(user_id, playlistTitle)
@@ -422,7 +408,7 @@ def genPlaylist(tracks, title, sp, user_id):
     sp.user_playlist_add_tracks(user_id, playlistInfo['id'], tracklist)
 
 
-def main(spUser, user_id):
+def main():
 
     random.seed(datetime.now())
 
@@ -446,7 +432,6 @@ def main(spUser, user_id):
             # If there is only one song to choose from
             if len(util.albumtracks) == 1:
                 #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
-                print("Sorry!!")
                 break
 
         artistsDict = relatedArtists(songData)
@@ -456,7 +441,7 @@ def main(spUser, user_id):
 
         # All the songs on the list have been chosen already 
         if len(util.alreadyChosenSP) == len(util.albumtracks):
-            print("Sorry! Couldn't find more songs")
+            print("Couldn't find more songs")
 
             random.shuffle(util.tempotracks)
 
