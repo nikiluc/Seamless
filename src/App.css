@@ -238,3 +238,11 @@ body .ui-autocomplete{
   font-family: 'Roboto', sans-serif;
   font-size: 25px;
 }
+
+
+.signOutBtn{
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  border-radius: 2rem;
+}
