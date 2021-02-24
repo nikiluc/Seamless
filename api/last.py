@@ -27,6 +27,8 @@ username = os.getenv('username')
 password = os.getenv('password')
 password_hash = pylast.md5(password)
 
+print(username, password)
+
 network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
                                username=username, password_hash=password_hash)
 
