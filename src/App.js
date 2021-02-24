@@ -194,7 +194,7 @@ const App = () => {
   }
 
   function isSignedIn(){
-    fetch("http://localhost:5000/isSignedIn", {
+    fetch("isSignedIn", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -247,7 +247,7 @@ const App = () => {
   }
 
   function makePlaylist(search_str) {
-    fetch("http://localhost:5000/playlist", {
+    fetch("/playlist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -285,7 +285,7 @@ const App = () => {
   }
 
   function postPlaylist(ans) {
-    fetch("http://localhost:5000/postPlaylist", {
+    fetch("/postPlaylist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -315,7 +315,7 @@ const App = () => {
   }
 
   function signOut () {
-    fetch("http://localhost:5000/signOut", {
+    fetch("/signOut", {
       method: "POST",
       mode: "cors",
       headers: {
