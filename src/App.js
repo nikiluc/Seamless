@@ -194,7 +194,7 @@ const App = () => {
   }
 
   function isSignedIn(){
-    fetch("/isSignedIn", {
+    fetch("https://seamless-io.herokuapp.com:5000/isSignedIn", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -247,7 +247,7 @@ const App = () => {
   }
 
   function makePlaylist(search_str) {
-    fetch("/playlist", {
+    fetch("https://seamless-io.herokuapp.com:5000/playlist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -285,7 +285,7 @@ const App = () => {
   }
 
   function postPlaylist(ans) {
-    fetch("/postPlaylist", {
+    fetch("https://seamless-io.herokuapp.com:5000/postPlaylist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -315,7 +315,7 @@ const App = () => {
   }
 
   function signOut () {
-    fetch("/signOut", {
+    fetch("https://seamless-io.herokuapp.com:5000/signOut", {
       method: "POST",
       mode: "cors",
       headers: {
