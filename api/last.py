@@ -1,4 +1,5 @@
 import os
+from os.path import join, dirname
 import uuid
 import requests
 import json
@@ -13,6 +14,9 @@ from song import Song
 from datetime import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+
+dp = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path=dp)
 
 # Authentication for LastFM API
 USER_AGENT = os.getenv('USER_AGENT')
@@ -31,6 +35,8 @@ network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
 
 def lastfm_get(payload):
     # define headers and URL
+    print(API_KEY, "KEY")
+    print(USER_AGENT, "KEY")
     headers = {'user-agent': USER_AGENT}
     url = 'http://ws.audioscrobbler.com/2.0/'
 
@@ -51,8 +57,10 @@ def validTracks(genSong, songObj):
 
     r = lastfm_get({'artist': songObj.artist, 'track': songObj.title})
     util.artistDict.update(({songObj.artist: songObj.a_id}))
+    print("HEY2")
     new_data = r.json()
     genSong.printInfo()
+    print(new_data)
 
     for i in range(len(new_data['similartracks']['track'])):
 
@@ -103,11 +111,7 @@ def validTracks(genSong, songObj):
     print([song.title for song in util.albumtracks])
 
 # Uses search string to find similar songs
-
-
 def launch(search_str, auth=None, user_id=None):
-
-    load_dotenv()
 
     #Authentication only occurs when user adds playlist
     if (search_str == "True"):
@@ -126,9 +130,7 @@ def launch(search_str, auth=None, user_id=None):
     util.albumtracks.append(songObj)
     validTracks(songObj, songObj)
 
-
     util.alreadyChosenFM.append(songObj)
-
     print("AMOUNT OF TRACKS: ")
     print(len(util.albumtracks))
 
@@ -142,11 +144,11 @@ def launch(search_str, auth=None, user_id=None):
             songData = random.sample(util.albumtracks, 1)[0]
             if len(util.albumtracks) == len(util.alreadyChosenFM):
                 seamless.main()
-                util.limit = len(util.albumtracks)
                 break
 
         if len(util.albumtracks) < util.limit:
             validTracks(songData, songObj)
+            seamless.recommendedTracks(songData)
             util.alreadyChosenFM.append(songData)
 
     for track in util.albumtracks:

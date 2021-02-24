@@ -165,7 +165,7 @@ def relatedArtists(genSong):
             util.artistDict.update({key: value})
 
     print(util.artistDict.keys())
-    print("ALREADY ", util.checkedArtists.keys())
+    print("ALREADY CHECKED", util.checkedArtists.keys())
 
     return util.artistDict
 
@@ -347,7 +347,6 @@ def getTracks(albumList, genSong, limit):
 
 
                                 if len(util.tempotracks) >= 5 and len(util.albumtracks) >= 3:
-                                    print("HEY")
                                     random.shuffle(util.tempotracks)
                                     for track in util.tempotracks:
                                         count = 0 
@@ -368,10 +367,8 @@ def getTracks(albumList, genSong, limit):
 
                     continue
 
-                
                 if len(util.albumtracks) >= 4:
                     recommendedTracks(genSong)
-                    print(len(util.albumtracks))
                       
                 if len(util.albumtracks) == util.limit:
                     break
@@ -382,7 +379,6 @@ def getTracks(albumList, genSong, limit):
             util.checkedAlbums.append(value)
         
         else:
-            
             util.checkedAlbums.append(value)
 
     if len(util.albumtracks) < util.limit:
@@ -431,7 +427,6 @@ def main():
             
             # If there is only one song to choose from
             if len(util.albumtracks) == 1:
-                #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
                 break
 
         artistsDict = relatedArtists(songData)
@@ -457,13 +452,13 @@ def main():
                             util.albumtracks.append(track)
                 else:
                     break
-            #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
+            
             break
         
     # Songs organized by tempo    
     #util.albumtracks = sorted(util.albumtracks, key=operator.attrgetter("valence"))
 
-    #genPlaylist(util.albumtracks, originSong.title, spUser, user_id)
+ 
 
 
 

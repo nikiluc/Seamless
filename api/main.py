@@ -10,7 +10,7 @@ from flask_session import Session
 import uuid
 import webbrowser
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../build", static_url_path="/")
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
@@ -24,6 +24,10 @@ if not os.path.exists(caches_folder):
 def session_cache_path():
     return caches_folder + session.get('uuid')
 
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/isSignedIn', methods=['POST'])
 def isSignedIn():

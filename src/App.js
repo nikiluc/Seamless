@@ -209,7 +209,6 @@ const App = () => {
         return response.text();
       })
       .then(function (response) {
-        console.log(response);
         if (response === 'true'){
           loadSignOut();
         }
@@ -240,6 +239,7 @@ const App = () => {
       },
       rootEl: document.getElementById("alan-btn"),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function playSong(song_info) {
@@ -300,16 +300,18 @@ const App = () => {
         return response.text();
       })
       .then(function (response) {
-        console.log(response);
+        if (response === "True"){
+          setTimeout(function () {
+            loadSignOut();
+          }, 2000);
+          setPosted(true);
+          alan.playText("Done.");
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-    setTimeout(function () {
-      loadSignOut();
-    }, 3000);
-    setPosted(true);
-    alan.playText("Done.");
+
   }
 
   function signOut () {
@@ -328,7 +330,7 @@ const App = () => {
         return response.text();
       })
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
       })
       .catch(function (error) {
         console.log(error);
