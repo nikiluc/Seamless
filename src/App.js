@@ -194,7 +194,7 @@ const App = () => {
   }
 
   function isSignedIn(){
-    fetch("isSignedIn", {
+    fetch("/api/isSignedIn", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -247,7 +247,7 @@ const App = () => {
   }
 
   function makePlaylist(search_str) {
-    fetch("/playlist", {
+    fetch("/api/playlist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -285,7 +285,7 @@ const App = () => {
   }
 
   function postPlaylist(ans) {
-    fetch("/postPlaylist", {
+    fetch("/api/postPlaylist", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -315,7 +315,7 @@ const App = () => {
   }
 
   function signOut () {
-    fetch("/signOut", {
+    fetch("/api/signOut", {
       method: "POST",
       mode: "cors",
       headers: {

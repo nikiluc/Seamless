@@ -29,14 +29,14 @@ def session_cache_path():
 def index():
     return app.send_static_file('index.html')
 
-@app.route('/isSignedIn', methods=['POST'])
+@app.route('/api/isSignedIn', methods=['POST'])
 def isSignedIn():
     if not session.get('uuid'):
         return json.dumps(False)
     else:
         return json.dumps(True)
 
-@app.route('/signOut', methods=['POST'])
+@app.route('/api/signOut', methods=['POST'])
 def signOut():
     try:
         # Remove the CACHE file (.cache-test) so that a new user can authorize.
@@ -46,7 +46,7 @@ def signOut():
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
 
-@app.route('/playlist', methods=['POST'])
+@app.route('/api/playlist', methods=['POST'])
 def makePlaylist():
     if request.method == 'POST':
         song_info = request.get_json()
@@ -60,7 +60,7 @@ def makePlaylist():
             print(e)
             return
 
-@app.route('/postPlaylist', methods=['POST'])
+@app.route('/api/postPlaylist', methods=['POST'])
 def postPlaylist():
 
     if not session.get('uuid'):
