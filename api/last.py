@@ -27,14 +27,10 @@ username = os.getenv('username')
 password = os.getenv('password')
 password_hash = pylast.md5(password)
 
-print(password_hash)
-
-network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
-                               username=username, password_hash=password_hash)
+#network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
+                               #username=username, password_hash=password_hash)
 
 # Gets similar tracks through last FM API
-
-
 def lastfm_get(payload):
     # define headers and URL
     print(API_KEY, "KEY")
