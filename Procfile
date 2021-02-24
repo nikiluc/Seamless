@@ -1,1 +1,1 @@
-web: gunicorn main:app
+web: sh -c 'cd .. && exec gunicorn main:app'
