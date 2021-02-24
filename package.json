@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "classnames": "^2.2.6",
+    "concurrently": "^6.0.0",
     "dotenv": "^8.2.0",
     "flask-cors": "0.0.1",
     "jquery": "^3.5.1",
