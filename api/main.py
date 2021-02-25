@@ -10,7 +10,7 @@ from flask_session import Session
 import uuid
 import webbrowser
 
-app = Flask(__name__, static_folder="../build", static_url_path="/")
+app = Flask(__name__, static_url_path="/")
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
@@ -34,7 +34,6 @@ def index(path):
 @app.errorhandler(404)   
 def not_found(e):
     root_dir = os.path.dirname(os.getcwd())
-    print(root_dir)
     return send_from_directory(os.path.join(root_dir, 'build'), 'index.html')
 
 @app.route('/api/isSignedIn', methods=['POST'])
