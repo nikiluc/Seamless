@@ -32,8 +32,9 @@ def index(path):
     return send_from_directory(os.path.join(root_dir, 'build', 'static'), 'index.html')
 
 @app.errorhandler(404)   
-def not_found(e):   
-  return send_from_directory(os.path.join(root_dir, 'build', 'static'), 'index.html')
+def not_found(e):
+    root_dir = os.path.dirname(os.getcwd())
+    return send_from_directory(os.path.join(root_dir, 'build', 'static'), 'index.html')
 
 @app.route('/api/isSignedIn', methods=['POST'])
 def isSignedIn():
