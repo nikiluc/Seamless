@@ -23,8 +23,8 @@ const client_secret = process.env.REACT_APP_client_secret;
 let access_token;
 
 const alanKey = process.env.REACT_APP_alanKey;
-
 var alan;
+
 
 const App = () => {
   const [inputText, setInputText] = useState("");
@@ -37,8 +37,6 @@ const App = () => {
   const ref = useRef(null);
 
   $(function () {
-
-    isSignedIn();
 
     window.$("#js-rotating").Morphext({
       animation: "animate__animated animate__fadeInUp",
@@ -225,6 +223,7 @@ const App = () => {
   }
 
   useEffect(() => {
+    isSignedIn();
     alan = alanBtn({
       key: alanKey,
       onCommand: ({ command, song_info, search_str, ans }) => {

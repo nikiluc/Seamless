@@ -56,7 +56,6 @@ def validTracks(genSong, songObj):
 
     r = lastfm_get({'artist': songObj.artist, 'track': songObj.title})
     util.artistDict.update(({songObj.artist: songObj.a_id}))
-    print("HEY2")
     new_data = r.json()
     genSong.printInfo()
     print(new_data)
