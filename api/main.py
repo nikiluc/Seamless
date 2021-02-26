@@ -75,7 +75,7 @@ def postPlaylist():
     if "WARNING" in str(auth_manager.get_cached_token()):
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return auth_url
+        return str(auth_url)
     
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 

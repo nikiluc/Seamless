@@ -16,6 +16,7 @@
     "dotenv": "^8.2.0",
     "flask-cors": "0.0.1",
     "jquery": "^3.5.1",
+    "open": "^7.4.2",
     "popper.js": "^1.16.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.3",
