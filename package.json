@@ -27,7 +27,7 @@
     "words-to-numbers": "^1.5.1"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\"  \"cd api && cd flask-tut && cd bin && flask run && cd.. && cd ..\"",
+    "start": "concurrently \"react-scripts start\"  \"cd api && cd flask-tut && cd bin && flask run && cd .. && cd ..\"",
     "start-flask-api": "cd api && flask-tut/bin/flask run",
     "build": "react-scripts build",
     "test": "react-scripts test",
