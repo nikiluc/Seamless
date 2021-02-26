@@ -4,13 +4,13 @@ import util
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from last import launch
-from flask import Flask, request, session, redirect, send_from_directory
+from flask import Flask, request, session, redirect
 from flask_cors import CORS
 from flask_session import Session
 import uuid
 import webbrowser
 
-app = Flask(__name__, static_url_path="/")
+app = Flask(__name__, static_folder="../build", static_url_path="/")
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
@@ -25,16 +25,9 @@ def session_cache_path():
     return caches_folder + session.get('uuid')
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def index(path):
-    root_dir = os.path.dirname(os.getcwd())
-    return send_from_directory(os.path.join(root_dir, 'build'), 'index.html')
-
-@app.errorhandler(404)   
-def not_found(e):
-    root_dir = os.path.dirname(os.getcwd())
-    return send_from_directory(os.path.join(root_dir, 'build'), 'index.html')
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/api/isSignedIn', methods=['POST'])
 def isSignedIn():
