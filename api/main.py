@@ -75,12 +75,7 @@ def postPlaylist():
     if "WARNING" in str(auth_manager.get_cached_token()):
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
-    
-    if request.args.get("code"):
-        # Step 3. Being redirected from Spotify auth page
-        auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
+        return auth_url
     
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 

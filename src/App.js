@@ -299,6 +299,11 @@ const App = () => {
         return response.text();
       })
       .then(function (response) {
+        if (response !== "True"){
+
+          window.open(response)
+          
+        }
         if (response === "True"){
           setTimeout(function () {
             loadSignOut();
