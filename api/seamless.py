@@ -196,10 +196,12 @@ def recommendedTracks(genSong):
     if len(idList) > 3:
         idList = idList[0:4]
     
+
+    
     tempList = []
 
     results = sp.recommendations(seed_tracks=idList, country='US',
-     limit=30, min_tempo=tempoRange[0] - 3, max_tempo=genSong.tempo + 3, target_tempo=genSong.tempo,
+     limit=30, min_tempo=tempoRange[0] - 5, max_tempo=genSong.tempo + 5, target_tempo=genSong.tempo,
      min_popularity = int(popRange[0]), max_popularity=int(popRange[-1]),
      min_energy=energyRange[0], max_energy=energyRange[-1], target_energy=genSong.energy,
      min_valence=valenceRange[0], max_valence=valenceRange[-1], target_valence=genSong.valence,
@@ -213,12 +215,13 @@ def recommendedTracks(genSong):
             if songObj not in util.albumtracks and len(util.albumtracks) != util.limit:
                 tempList.append(songObj)
     
-    random.shuffle(tempList)
-    for songObj in tempList:
-        if len(util.albumtracks) < util.limit:
-            util.albumtracks.append(songObj)
-        else:
-            break
+    if len(tempList) > 1:
+        random.shuffle(tempList)
+        for songObj in tempList:
+            if len(util.albumtracks) < util.limit:
+                util.albumtracks.append(songObj)
+            else:
+                break
 
 
 # Finds albums published within the correct time frame
@@ -371,13 +374,17 @@ def getTracks(albumList, genSong, limit):
                 if len(util.albumtracks) == 1:
                     if util.inRange > 7:
                         recommendedTracks(genSong)
-                        if len(util.albumtracks) == 2:
+                        if len(util.albumtracks) >= 2:
                             recommendedTracks(util.albumtracks[1])
+                        elif len(util.tempotracks) > 1:
+                            util.albumtracks.append(util.tempotracks[0])
+                            util.tempotracks.pop(0)
+                                    
   
                 if len(util.albumtracks) + len(util.tempotracks) >= 3:
                     recommendedTracks(genSong)
                 
-                    if len(util.albumtracks) < util.limit:
+                    if len(util.albumtracks) < util.limit and len(util.albumtracks) > 1:
                         recommendedTracks(util.albumtracks[1])
                       
                 if len(util.albumtracks) == util.limit:

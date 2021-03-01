@@ -493,7 +493,7 @@ const App = () => {
           ></Image>
         </div>
         <span hidden={!loading} id="js-rotating">
-          Studying similar artists..., You have an awesome taste in music!,
+          Studying similar artists..., This looks interesting...,
           Finding great songs..., Putting you on to new sounds..., Thanks for
           using Seamless :), Elvis?? That's not right..., Back on
           track!...sorta?, Bringing you quality music..., Making a playlist...,
