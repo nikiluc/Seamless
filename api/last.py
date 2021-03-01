@@ -27,11 +27,7 @@ username = os.getenv('username')
 password = os.getenv('password')
 password_hash = pylast.md5(password)
 
-
-
 # Gets similar tracks through last FM API
-
-
 def lastfm_get(payload):
     # define headers and URL
     print(API_KEY, "KEY")
@@ -48,8 +44,6 @@ def lastfm_get(payload):
     return response
 
 # Choosing tracks that satisfy the requiremnts
-
-
 def validTracks(genSong, songObj):
 
     valid = []
@@ -109,7 +103,7 @@ def validTracks(genSong, songObj):
     print([song.title for song in util.albumtracks])
 
 # Uses search string to find similar songs
-def launch(search_str, auth=None, user_id=None):
+def launch(search_str, auth=None):
 
     #Authentication only occurs when user adds playlist
     if (search_str == "True"):

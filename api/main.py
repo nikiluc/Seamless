@@ -1,4 +1,5 @@
 import os, sys
+from os.path import join, dirname
 import json
 import util
 import spotipy
@@ -8,7 +9,6 @@ from flask import Flask, request, session, redirect
 from flask_cors import CORS
 from flask_session import Session
 import uuid
-import webbrowser
 
 app = Flask(__name__, static_folder="../build", static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(64)
@@ -50,7 +50,6 @@ def signOut():
 def makePlaylist():
     if request.method == 'POST':
         song_info = request.get_json()
-        print(song_info['search_str'])
         try:
             songs = launch(song_info['search_str'])
             songs_response = json.dumps([ob.__dict__ for ob in songs])
@@ -63,6 +62,7 @@ def makePlaylist():
 @app.route('/api/postPlaylist', methods=['POST'])
 def postPlaylist():
 
+    res1 = request.get_json()
     if not session.get('uuid'):
         # Step 1. Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
@@ -70,20 +70,17 @@ def postPlaylist():
     scope = 'playlist-modify-public'
     auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
                                                 cache_path=session_cache_path(), 
-                                                show_dialog=True)
-   
-    if "WARNING" in str(auth_manager.get_cached_token()):
-        # Step 2. Display sign in link when no token
-        auth_url = auth_manager.get_authorize_url()
-        return str(auth_url)
+                                                show_dialog=True, redirect_uri=res1[2])
+    
+    if not auth_manager.get_cached_token():
+        auth_manager.get_access_token(res1[1])
     
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
     if request.method == 'POST':
-        userResponse = request.get_json()
         try:
-            if userResponse['ans'] == "True":
-                res = launch(userResponse['ans'], spotify)
+            if res1[0] == "True":
+                res = launch("True", spotify)
         except:
             e = sys.exc_info()[0]
             print(e)

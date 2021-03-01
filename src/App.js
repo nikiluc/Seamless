@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -20,11 +20,11 @@ dotenv.config({ path: ".env" });
 
 const client_id = process.env.REACT_APP_client_id;
 const client_secret = process.env.REACT_APP_client_secret;
+const redirect_uri = process.env.REACT_APP_redirect_uri;
 let access_token;
 
 const alanKey = process.env.REACT_APP_alanKey;
 var alan;
-
 
 const App = () => {
   const [inputText, setInputText] = useState("");
@@ -34,16 +34,10 @@ const App = () => {
   const [posted, setPosted] = useState(false);
   const [alert, showAlert] = useState(false);
   const [found, setFound] = useState(false);
+  const [signIn, setSignIn] = useState(false);
   const ref = useRef(null);
 
   $(function () {
-
-    window.$("#js-rotating").Morphext({
-      animation: "animate__animated animate__fadeInUp",
-      separator: ",",
-      speed: 2500,
-      complete: function () {},
-    });
 
     axios("https://accounts.spotify.com/api/token", {
       headers: {
@@ -102,7 +96,6 @@ const App = () => {
   const inputTextHandler = (e) => {
     setInputText(e.target.value);
     setFound(false);
-    //console.log(e.target.value);
   };
 
   //Final Typed Query from user
@@ -140,6 +133,12 @@ const App = () => {
   };
 
   function loadingAnimation() {
+    window.$("#js-rotating").Morphext({
+      animation: "animate__animated animate__fadeInUp",
+      separator: ",",
+      speed: 2500,
+      complete: function () {},
+    });
     $(".title").addClass("animate__animated animate__fadeOut");
     $(".form-rounded").addClass("animate__animated animate__fadeOutUp");
     $(".submitBtn").addClass("animate__animated animate__fadeOutDown");
@@ -209,13 +208,14 @@ const App = () => {
       .then(function (response) {
         if (response === 'true'){
           loadSignOut();
+          setSignIn(true);
+
         }
 
       })
       .catch(function (error) {
         console.log(error);
       });
-
   }
 
   function refreshPage() {
@@ -223,6 +223,13 @@ const App = () => {
   }
 
   useEffect(() => {
+    let code = undefined;
+    if (window.location.href.includes("code")) {
+      code = window.location.href.substr(41);
+    }
+    if (code) {
+      window.opener.spotifyCallback(code)
+    }
     isSignedIn();
     alan = alanBtn({
       key: alanKey,
@@ -283,14 +290,14 @@ const App = () => {
       });
   }
 
-  function postPlaylist(ans) {
+  function sendtoSpotify(ans, payload, redirect_uri) {
     fetch("/api/postPlaylist", {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "Application/JSON",
       },
-      body: JSON.stringify({ ans }),
+      body: JSON.stringify([ans, payload, redirect_uri]),
     })
       .then(function (response) {
         if (!response.ok) {
@@ -298,16 +305,11 @@ const App = () => {
         }
         return response.text();
       })
-      .then(function (response) {
-        if (response !== "True"){
-
-          window.open(response)
-          
-        }
+      .then(function (response) {    
         if (response === "True"){
           setTimeout(function () {
             loadSignOut();
-          }, 2000);
+          }, 1000);
           setPosted(true);
           alan.playText("Done.");
         }
@@ -316,6 +318,21 @@ const App = () => {
         console.log(error);
       });
 
+  }
+
+  function postPlaylist(ans) {
+    let placeHolder = "";
+    if (signIn === false) {
+      const scope = 'playlist-modify-public';
+      let popup = window.open(`https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&scope=${scope}`, 'Login with Spotify', 'width=800,height=600',);
+      window.spotifyCallback = (payload) => {
+        popup.close()
+        sendtoSpotify(ans, payload, redirect_uri)
+      }
+    }
+    else {
+      sendtoSpotify(ans, placeHolder, redirect_uri)
+    }
   }
 
   function signOut () {
@@ -332,9 +349,6 @@ const App = () => {
           throw Error(response.statusText);
         }
         return response.text();
-      })
-      .then(function (response) {
-        //console.log(response);
       })
       .catch(function (error) {
         console.log(error);
@@ -482,15 +496,9 @@ const App = () => {
           Studying similar artists..., You have an awesome taste in music!,
           Finding great songs..., Putting you on to new sounds..., Thanks for
           using Seamless :), Elvis?? That's not right..., Back on
-          track!...sorta?, Brining you quality music...,
+          track!...sorta?, Bringing you quality music..., Making a playlist...,
+          Wrapping up..., 
         </span>
-        <div className="spinner" hidden={!loading}>
-          <div className="rect1"></div>
-          <div className="rect2"></div>
-          <div className="rect3"></div>
-          <div className="rect4"></div>
-          <div className="rect5"></div>
-        </div>
         <div className="animate-flicker" hidden={!loading}></div>
         <div>
           <ListGroup as="ul" className="songList" hidden={true}></ListGroup>

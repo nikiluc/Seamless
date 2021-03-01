@@ -14,6 +14,7 @@ def init():
     global year
     global secondArtist
     global secondArtistFlag
+    global inRange
 
     albumtracks = []
     tempotracks = []
@@ -26,6 +27,7 @@ def init():
     checkedArtists = {}
     limit = 10
     year = 0
+    inRange = 0
 
 
 def calcLoudnessRange(value):
@@ -38,7 +40,7 @@ def calcLoudnessRange(value):
 
 def calcAcousticnessRange(value):
 
-    acousticRange = list(np.arange(float(value) - .25, float(value) + .35, .001))
+    acousticRange = list(np.arange(float(value) - .25, float(value) + .50, .001))
 
     roundedAcoustic = [round(x, 3) for x in acousticRange]
 
@@ -96,7 +98,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .3, float(value) + .3, .001))
+    valenceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
