@@ -13,11 +13,11 @@ import uuid
 app = Flask(__name__, static_folder="../build", static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = './.flask_session/'
+app.config['SESSION_FILE_DIR'] = './flask_session/'
 CORS(app)
 Session(app)
 
-caches_folder = './.spotify_caches/'
+caches_folder = './spotify_caches/'
 if not os.path.exists(caches_folder):
     os.makedirs(caches_folder)
 
