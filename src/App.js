@@ -226,7 +226,7 @@ const App = () => {
   useEffect(() => {
     let code = undefined;
     if (window.location.href.includes("code")) {
-      code = window.location.href.substr(26);
+      code = window.location.href.substr(40);
     }
     if (code) {
       window.opener.spotifyCallback(code)
