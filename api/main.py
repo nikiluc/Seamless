@@ -42,6 +42,7 @@ def signOut():
         # Remove the CACHE file (.cache-test) so that a new user can authorize.
         os.remove(session_cache_path())
         session.clear()
+        
     except OSError as e:
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
@@ -74,6 +75,7 @@ def postPlaylist():
     
     if not auth_manager.get_cached_token():
         auth_manager.get_access_token(res1[1])
+
     
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 

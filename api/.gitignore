@@ -19,8 +19,8 @@
 .env.production.local
 .env
 .cache
-/.spotify_caches
-/.flask_session
+
+
 
 npm-debug.log*
 yarn-debug.log*
