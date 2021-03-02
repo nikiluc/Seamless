@@ -103,7 +103,7 @@ def validTracks(genSong, songObj):
     print([song.title for song in util.albumtracks])
 
 # Uses search string to find similar songs
-def launch(search_str, auth=None):
+def launch(search_str, auth=None, final_songs=None):
 
     #Authentication only occurs when user adds playlist
     if (search_str == "True"):
@@ -111,7 +111,7 @@ def launch(search_str, auth=None):
         user_id = spUser.me()['id']
         print("IN LAUNCH PAST TRUE")
         seamless.genPlaylist(
-            util.albumtracks, util.albumtracks[0].title, util.albumtracks[0].artist, spUser, user_id)
+            final_songs, final_songs[0]['title'], final_songs[0]['artist'], spUser, user_id)
         util.init()
         return True
 

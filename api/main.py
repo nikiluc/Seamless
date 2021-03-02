@@ -42,7 +42,7 @@ def signOut():
         # Remove the CACHE file (.cache-test) so that a new user can authorize.
         os.remove(session_cache_path())
         session.clear()
-        
+
     except OSError as e:
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
@@ -86,7 +86,7 @@ def postPlaylist():
         try:
             if res1[0] == "True":
                 print("launch")
-                res = launch("True", spotify)
+                res = launch("True", spotify, res1[3])
         except:
             e = sys.exc_info()[0]
             print(e)

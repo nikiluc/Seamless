@@ -408,11 +408,9 @@ def genPlaylist(tracks, title, artist, sp, user_id):
 
     tracklist = []
 
-    print(tracks, title, artist, sp, user_id)
-
     for track in tracks:
-        tracklist.append(track.id)
-        print(track.title + " " + str(track.tempo))
+        tracklist.append(track['id'])
+        print(track['title'] + " " + str(track['tempo']))
 
     print("after")
     
