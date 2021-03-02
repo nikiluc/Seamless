@@ -109,6 +109,7 @@ def launch(search_str, auth=None):
     if (search_str == "True"):
         spUser = auth
         user_id = spUser.me()['id']
+        print("IN LAUNCH PAST TRUE")
         seamless.genPlaylist(
             util.albumtracks, util.albumtracks[0].title, util.albumtracks[0].artist, spUser, user_id)
         return True

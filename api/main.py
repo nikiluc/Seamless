@@ -73,15 +73,19 @@ def postPlaylist():
                                                 cache_path=session_cache_path(), 
                                                 show_dialog=True, redirect_uri=res1[2])
     
+    print("before auth manager")
+    
     if not auth_manager.get_cached_token():
         auth_manager.get_access_token(res1[1])
 
+    print("before spotify")
     
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
     if request.method == 'POST':
         try:
             if res1[0] == "True":
+                print("launch")
                 res = launch("True", spotify)
         except:
             e = sys.exc_info()[0]
