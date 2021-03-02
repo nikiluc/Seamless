@@ -22,6 +22,7 @@ const client_id = process.env.REACT_APP_client_id;
 const client_secret = process.env.REACT_APP_client_secret;
 const redirect_uri = process.env.REACT_APP_redirect_uri;
 let access_token;
+let final_songs;
 
 const alanKey = process.env.REACT_APP_alanKey;
 var alan;
@@ -225,7 +226,7 @@ const App = () => {
   useEffect(() => {
     let code = undefined;
     if (window.location.href.includes("code")) {
-      code = window.location.href.substr(40);
+      code = window.location.href.substr(26);
     }
     if (code) {
       window.opener.spotifyCallback(code)
@@ -287,6 +288,7 @@ const App = () => {
         }
         var songArray = JSON.parse(response);
         loadResults(songArray);
+        final_songs = songArray;
       });
   }
 
@@ -297,7 +299,7 @@ const App = () => {
       headers: {
         "Content-Type": "Application/JSON",
       },
-      body: JSON.stringify([ans, payload, redirect_uri]),
+      body: JSON.stringify([ans, payload, redirect_uri, final_songs]),
     })
       .then(function (response) {
         if (!response.ok) {
@@ -355,6 +357,7 @@ const App = () => {
       });
 
       refreshPage();
+      setSignIn(false);
   }
 
   return (
