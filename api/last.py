@@ -112,6 +112,7 @@ def launch(search_str, auth=None):
         print("IN LAUNCH PAST TRUE")
         seamless.genPlaylist(
             util.albumtracks, util.albumtracks[0].title, util.albumtracks[0].artist, spUser, user_id)
+        util.init()
         return True
 
     # initialization of global variables
