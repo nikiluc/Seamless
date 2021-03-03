@@ -5,4 +5,6 @@ A personal project, wanted to find songs that were similar to each other with si
 
 Open two terminal windows and run 'npm start' in the first one (frontend) and 'npm run start-flask-api' (backend) in the second one.
 
+Live Demo: https://seamless-io.herokuapp.com/ 
+
 
