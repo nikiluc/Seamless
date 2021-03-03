@@ -41,6 +41,7 @@ def signOut():
     try:
         # Remove the CACHE file (.cache-test) so that a new user can authorize.
         os.remove(session_cache_path())
+        session.pop('uuid', None)
         session.clear()
 
     except OSError as e:
