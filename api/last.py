@@ -52,7 +52,6 @@ def validTracks(genSong, songObj):
     util.artistDict.update(({songObj.artist: songObj.a_id}))
     new_data = r.json()
     genSong.printInfo()
-    print(new_data)
 
     for i in range(len(new_data['similartracks']['track'])):
 
