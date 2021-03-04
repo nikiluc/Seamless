@@ -40,7 +40,7 @@ def calcLoudnessRange(value):
 
 def calcAcousticnessRange(value):
 
-    acousticRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    acousticRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedAcoustic = [round(x, 3) for x in acousticRange]
 
@@ -55,7 +55,7 @@ def calcPopularityRange(value):
     
     else:
 
-        popRange = list(np.arange(float(value) - 25, float(value) + 35, 1))
+        popRange = list(np.arange(float(value) - 30, float(value) + 35, 1))
 
     roundedPopularity = [round(x, 3) for x in popRange]
 
@@ -98,7 +98,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    valenceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
@@ -106,7 +106,7 @@ def calcValenceRange(value):
 
 def calcSpeechRange(value):
 
-    speechRange = list(np.arange(float(value) - .2, float(value) + .2, .0001))
+    speechRange = list(np.arange(float(value) - .25, float(value) + .25, .0001))
 
     roundedSpeech = [round(x, 3) for x in speechRange]
 
