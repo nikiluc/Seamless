@@ -30,8 +30,6 @@ password_hash = pylast.md5(password)
 # Gets similar tracks through last FM API
 def lastfm_get(payload):
     # define headers and URL
-    print(API_KEY, "KEY")
-    print(USER_AGENT, "KEY")
     headers = {'user-agent': USER_AGENT}
     url = 'http://ws.audioscrobbler.com/2.0/'
 
@@ -126,6 +124,7 @@ def launch(search_str, auth=None, final_songs=None):
     util.alreadyChosenFM.append(songObj)
     print("AMOUNT OF TRACKS: ")
     print(len(util.albumtracks))
+    seamless.recommendedTracks(songObj)
 
     # finds similar songs of tracks that have already satisfied the requirements
     while len(util.albumtracks) < util.limit:

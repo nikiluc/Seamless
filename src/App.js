@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import alanBtn from "@alan-ai/alan-sdk-web";
-import background from "./images/download.png";
+import background from "./images/download.jpg";
 import musicGif from "./images/jakeMusic.gif";
 import "./App.css";
 import $ from "jquery";

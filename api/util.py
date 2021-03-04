@@ -40,7 +40,7 @@ def calcLoudnessRange(value):
 
 def calcAcousticnessRange(value):
 
-    acousticRange = list(np.arange(float(value) - .25, float(value) + .50, .001))
+    acousticRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
 
     roundedAcoustic = [round(x, 3) for x in acousticRange]
 
@@ -63,7 +63,7 @@ def calcPopularityRange(value):
 
 def calcEnergyRange(value):
 
-    energyRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
+    energyRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
 
     roundedEnergy = [round(x, 3) for x in energyRange]
 
@@ -71,7 +71,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .25, float(value) + .25, .001))
+    danceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -98,7 +98,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .3, float(value) + .3, .001))
+    valenceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
@@ -106,7 +106,7 @@ def calcValenceRange(value):
 
 def calcSpeechRange(value):
 
-    speechRange = list(np.arange(float(value) - .33, float(value) + .33, .0001))
+    speechRange = list(np.arange(float(value) - .2, float(value) + .2, .0001))
 
     roundedSpeech = [round(x, 3) for x in speechRange]
 

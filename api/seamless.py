@@ -187,20 +187,21 @@ def recommendedTracks(genSong):
 
     yearRange = util.calcYearRange(genSong.year)
     recList = list(util.artistDict.values())
-    recList = [recList[0]]
     idList = []
 
     for song in util.albumtracks:
         idList.append(song.id)
     
     if len(idList) > 3:
-        idList = idList[0:4]
-    
-
+        idList = idList[0:3]
+        recList = [recList[0]]
+    else:
+        idList = idList[0:3]
+        recList = []
     
     tempList = []
 
-    results = sp.recommendations(seed_tracks=idList, country='US',
+    results = sp.recommendations(seed_tracks=idList, seed_artists=recList, country='US',
      limit=30, min_tempo=tempoRange[0] - 5, max_tempo=genSong.tempo + 5, target_tempo=genSong.tempo,
      min_popularity = int(popRange[0]), max_popularity=int(popRange[-1]),
      min_energy=energyRange[0], max_energy=energyRange[-1], target_energy=genSong.energy,
@@ -215,10 +216,16 @@ def recommendedTracks(genSong):
             if songObj not in util.albumtracks and len(util.albumtracks) != util.limit:
                 tempList.append(songObj)
     
+    random.seed(datetime.now())
+    
     if len(tempList) > 1:
         random.shuffle(tempList)
         for songObj in tempList:
-            if len(util.albumtracks) < util.limit:
+            remixFlag = False
+            for track in util.albumtracks:
+                if track.title.split("(")[0] == songObj.title.split("(")[0] and track.artist == songObj.artist:
+                    remixFlag = True
+            if len(util.albumtracks) < util.limit and remixFlag == False:
                 util.albumtracks.append(songObj)
             else:
                 break
@@ -335,7 +342,8 @@ def getTracks(albumList, genSong, limit):
                                 # only working with songs available in the US (for now)
                                 if 'US' in songObj.availableMarkets:
                                     songObj.printInfo()
-                                    util.albumtracks.append(songObj)
+                                    if track.title.split("(")[0] != songObj.title.split("(")[0] and track.artist == songObj.artist:
+                                        util.albumtracks.append(songObj)
                                 else:
                                     continue
                 
@@ -411,9 +419,6 @@ def genPlaylist(tracks, title, artist, sp, user_id):
     for track in tracks:
         tracklist.append(track['id'])
         print(track['title'] + " " + str(track['tempo']))
-
-    print("after")
-    
     
     playlistTitle = "Seamless: " + artist + " - " + title
 
