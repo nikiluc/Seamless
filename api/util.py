@@ -71,7 +71,7 @@ def calcEnergyRange(value):
 
 def calcDanceabilityRange(value):
 
-    danceRange = list(np.arange(float(value) - .17, float(value) + .17, .001))
+    danceRange = list(np.arange(float(value) - .23, float(value) + .23, .001))
 
     roundedDance = [round(x, 3) for x in danceRange]
 
@@ -98,7 +98,7 @@ def calcTempoRange(value):
 
 def calcValenceRange(value):
 
-    valenceRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    valenceRange = list(np.arange(float(value) - .23, float(value) + .23, .001))
 
     roundedValence = [round(x, 3) for x in valenceRange]
 
