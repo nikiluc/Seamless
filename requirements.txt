@@ -16,6 +16,6 @@ python-dotenv==0.15.0
 requests==2.25.1
 six==1.15.0
 spotipy==2.16.1
-urllib3==1.26.3
+urllib3==1.26.4
 uuid==1.30
 Werkzeug==1.0.1
