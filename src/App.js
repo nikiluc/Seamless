@@ -305,7 +305,6 @@ const App = () => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
-        return response.text();
       })
       .then(function (response) {    
         if (response === "True"){

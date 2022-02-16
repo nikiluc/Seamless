@@ -3,128 +3,104 @@ import numpy as np
 # Initializes global variables 
 def init():
 
-    global albumtracks
-    global tempotracks
-    global alreadyChosenFM
-    global alreadyChosenSP
-    global checkedAlbums
-    global artistDict
-    global checkedArtists
+    global album_tracks
+    global tempo_tracks
+    global already_chosen_fm
+    global already_chosen_sp
+    global checked_albums
+    global artist_dict
+    global checked_artists
     global limit
     global year
-    global secondArtist
-    global secondArtistFlag
-    global inRange
+    global second_artist
+    global second_artistFlag
+    global in_range
 
-    albumtracks = []
-    tempotracks = []
-    alreadyChosenFM = []
-    alreadyChosenSP = []
-    checkedAlbums = []
-    secondArtist = {}
-    secondArtistFlag = False
-    artistDict = {}
-    checkedArtists = {}
+    album_tracks = []
+    tempo_tracks = []
+    already_chosen_fm = []
+    already_chosen_sp = []
+    checked_albums = []
+    second_artist = {}
+    second_artistFlag = False
+    artist_dict = {}
+    checked_artists = {}
     limit = 10
     year = 0
-    inRange = 0
+    in_range = 0
 
 
-def calcLoudnessRange(value):
+def calc_loudness_range(value):
 
-    loudRange = list(np.arange(float(value) - 3, float(value) + 3, 1))
+    loud_range = list(np.arange(float(value) - 3, float(value) + 3, 1))
+    rounded_loud = [round(x, 3) for x in loud_range]
 
-    roundedLoud = [round(x, 3) for x in loudRange]
+    return rounded_loud
 
-    return roundedLoud
+def calc_acousticness_range(value):
 
-def calcAcousticnessRange(value):
+    acoustic_range = list(np.arange(float(value) - .22, float(value) + .22, .001))
+    rounded_acoustic = [round(x, 3) for x in acoustic_range]
 
-    acousticRange = list(np.arange(float(value) - .22, float(value) + .22, .001))
-
-    roundedAcoustic = [round(x, 3) for x in acousticRange]
-
-    return roundedAcoustic
+    return rounded_acoustic
 
 
-def calcPopularityRange(value):
+def calc_popularity_range(value):
 
     if value >= 75:
-
-        popRange = list(np.arange(float(value) - 40, float(value) + 35, 1))
-    
+        pop_range = list(np.arange(float(value) - 40, float(value) + 35, 1))
     else:
-
-        popRange = list(np.arange(float(value) - 30, float(value) + 35, 1))
-
-    roundedPopularity = [round(x, 3) for x in popRange]
+        pop_range = list(np.arange(float(value) - 30, float(value) + 35, 1))
+    roundedPopularity = [round(x, 3) for x in pop_range]
 
     return roundedPopularity
 
-def calcEnergyRange(value):
+def calc_energy_range(value):
 
-    energyRange = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    energy_range = list(np.arange(float(value) - .2, float(value) + .2, .001))
+    rounded_energy = [round(x, 3) for x in energy_range]
 
-    roundedEnergy = [round(x, 3) for x in energyRange]
+    return rounded_energy
 
-    return roundedEnergy
+def calc_danceability_range(value):
 
-def calcDanceabilityRange(value):
+    dance_range = list(np.arange(float(value) - .23, float(value) + .23, .001))
+    rounded_dance = [round(x, 3) for x in dance_range]
 
-    danceRange = list(np.arange(float(value) - .23, float(value) + .23, .001))
+    return rounded_dance
 
-    roundedDance = [round(x, 3) for x in danceRange]
+def calc_tempo_range(value):
 
-    return roundedDance
+    range_val = 6
+    half_bpm = int(value/2)
+    double_bpm = int(value * 2)
 
-def calcTempoRange(value):
+    tempo_range_full = [*range(value - range_val, value + range_val, 1)]
+    tempo_range_half = [*range(half_bpm - range_val, half_bpm + range_val, 1)]
+    tempo_range_double = [*range(double_bpm - range_val, double_bpm + range_val, 1)]
+    tempo_range = tempo_range_full + tempo_range_half + tempo_range_double
 
-    rangeVal = 6
+    return tempo_range
 
-    halfBPM = int(value/2)
+def calc_valence_range(value):
 
-    doubleBPM = int(value * 2)
+    valence_range = list(np.arange(float(value) - .23, float(value) + .23, .001))
+    rounded_valence = [round(x, 3) for x in valence_range]
 
-    tempoRangeFull = [*range(value - rangeVal, value + rangeVal, 1)]
+    return rounded_valence
 
-    tempoRangeHalf = [*range(halfBPM - rangeVal, halfBPM + rangeVal, 1)]
+def calc_speech_range(value):
 
-    tempoRangeDouble = [*range(doubleBPM - rangeVal, doubleBPM + rangeVal, 1)]
+    speech_range = list(np.arange(float(value) - .25, float(value) + .25, .0001))
+    rounded_speech = [round(x, 3) for x in speech_range]
 
-    tempoRange = tempoRangeFull + tempoRangeHalf + tempoRangeDouble
+    return rounded_speech
 
+def calc_year_range(value):
 
-    return tempoRange
+    song_year_lower = int(value) - 2
+    song_year_upper = int(value) + 3
 
-def calcValenceRange(value):
-
-    valenceRange = list(np.arange(float(value) - .23, float(value) + .23, .001))
-
-    roundedValence = [round(x, 3) for x in valenceRange]
-
-    return roundedValence
-
-def calcSpeechRange(value):
-
-    speechRange = list(np.arange(float(value) - .25, float(value) + .25, .0001))
-
-    roundedSpeech = [round(x, 3) for x in speechRange]
-
-    return roundedSpeech
-
-def calcYearRange(value):
-
-    songYear = int(value)
-
-    if songYear in [2019, 2020, 2021]:
-        songYRange1 = songYear - 2
-        songYRange2 = songYear + 2
-    
-    else:
-
-        songYRange1 = songYear - 2
-        songYRange2 = songYear + 3
-
-    return list(range(songYRange1, songYRange2))
+    return list(range(song_year_lower, song_year_upper))
 
 
